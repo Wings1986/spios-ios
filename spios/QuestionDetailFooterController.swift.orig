@@ -1,0 +1,136 @@
+//
+//  QuestionDetailFooterController.swift
+//  spios
+//
+//  Created by Administrator on 6/9/15.
+//  Copyright (c) 2015 Studypool. All rights reserved.
+//
+
+import UIKit
+
+protocol QuestionDetailFooterControllerDelegate
+{
+    func openView()
+    func closeView()
+}
+
+class QuestionDetailFooterController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+
+<<<<<<< HEAD
+    @IBOutlet weak var toolView: UIView!
+=======
+>>>>>>> d29206bda130dbf771bf88db6533524e610512da
+    @IBOutlet weak var btnExpand: UIButton!
+    @IBOutlet weak var mTableView: UITableView!
+    
+    var delegate:QuestionDetailFooterControllerDelegate?
+    
+    
+    var dataArray = [
+        ["avatar": "", "name":"Deadpool", "title":"Math Tutor, Yale University"],
+        ["avatar": "", "name":"Batman", "title":"Math Tutor, Princeton University"],
+        ["avatar": "", "name":"Superman", "title":"Algebra Tutor, Harvard University"],
+        ]
+    
+    var bExpand:Bool = false
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+        
+        btnExpand.layer.cornerRadius = btnExpand.frame.size.width/2;
+        btnExpand.layer.borderWidth = 5;
+        btnExpand.layer.borderColor = UIColor(red: 241/255.0, green: 241/255.0, blue: 241/255.0, alpha: 1.0).CGColor
+<<<<<<< HEAD
+        
+        var swipeUp = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        swipeUp.direction = UISwipeGestureRecognizerDirection.Up
+        self.toolView.addGestureRecognizer(swipeUp)
+        
+        var swipeDown = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        swipeDown.direction = UISwipeGestureRecognizerDirection.Down
+        self.toolView.addGestureRecognizer(swipeDown)
+=======
+>>>>>>> d29206bda130dbf771bf88db6533524e610512da
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+<<<<<<< HEAD
+    func respondToSwipeGesture(gesture: UISwipeGestureRecognizer) {
+        
+        if gesture.direction == UISwipeGestureRecognizerDirection.Up {
+            
+            self.delegate?.openView()
+            bExpand = true
+            
+        } else {
+
+            self.delegate?.closeView()
+            bExpand = false
+
+        }
+    }
+
+    // MARK: - tableVeiw delegate
+=======
+>>>>>>> d29206bda130dbf771bf88db6533524e610512da
+
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dataArray.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCellWithIdentifier("QuestionTutorCell", forIndexPath: indexPath) as! QuestionTutorCell
+
+        if (indexPath.row % 2 == 0) {
+            cell.backgroundColor = UIColor(red: 250/255.0, green: 250/255.0, blue: 250/255.0, alpha: 1.0)
+        } else {
+            cell.backgroundColor = UIColor.whiteColor()
+        }
+
+        cell.ivAvatar.layer.cornerRadius = cell.ivAvatar.frame.size.width/2
+        cell.ivAvatar.layer.borderWidth = 3;
+        cell.ivAvatar.layer.borderColor = UIColor(red: 241/255.0, green: 241/255.0, blue: 241/255.0, alpha: 1.0).CGColor
+        cell.ivAvatar.clipsToBounds = true
+        
+        cell.lbName?.text = dataArray[indexPath.row]["name"];
+        cell.lbTitle?.text = dataArray[indexPath.row]["title"];
+
+        return cell;
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    }
+    
+    
+    @IBAction func onClickExpand(sender: AnyObject) {
+        
+        if (bExpand == true) {
+            self.delegate?.closeView()
+            bExpand = false
+        }
+        else {
+            self.delegate?.openView()
+            bExpand = true
+        }
+        
+    }
+    
+}

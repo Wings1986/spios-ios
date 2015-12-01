@@ -1,0 +1,48 @@
+//
+//  PromotionViewController.swift
+<<<<<<< HEAD
+//  spios
+//
+//  Created by user on 6/15/15.
+=======
+//
+//  Created by StudyPool on 6/15/15.
+//  Modified by Andrew Mikhailov on 2015.06.18.
+>>>>>>> eedb4b487ab27087dce73484cdfff486355e6b7f
+//  Copyright (c) 2015 Studypool. All rights reserved.
+//
+
+import UIKit
+
+class PromotionViewController: UIViewController {
+<<<<<<< HEAD
+    
+    
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.setNavigationBarItem()
+        // Do any additional setup after loading the view.
+    }
+    
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+}
+=======
+}
+>>>>>>> eedb4b487ab27087dce73484cdfff486355e6b7f

@@ -1,0 +1,791 @@
+//
+//  QuestionsViewController.swift
+//  spios
+//
+//  Created by Stanley Chiang on 4/15/15.
+//  Copyright (c) 2015 Studypool. All rights reserved.
+//
+
+
+/*
+Variables:
+    UIView descriptionview: Holds instructions to user
+    UICollectionView clvImageUpload: CollectionView for the images
+    UITextField titleField: Textfield for user to enter title of question
+    UITextView descField: Where user enters description of question
+    UILabel textlength: label showing how many characters user has left
+    UIBarButtonItem btnNext: next button
+    String qTitle: Intermediate variable that holds question title (probably unnecessary)
+    String qDesc: Intermediate variable that holds question description (probably unnecessary)
+    Int qCat: Not Used
+    String qid: Not Used
+    Bool isImage: Indicates if the user attached an image?
+    [UIImage] arrImages: Holds the images that user uploads
+    UIColor greyColor: not Used
+    UIColor blueColor: not Used
+    UITapGestureRecognizer tapBack: detects when the user taps the background
+
+*/
+import UIKit
+import AVFoundation
+import MobileCoreServices
+import Analytics
+
+
+class QuestionsViewController: UIViewController, UIImagePickerControllerDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UITextViewDelegate, UITextFieldDelegate,UICollectionViewDataSource,UICollectionViewDelegate {
+    
+    
+    @IBOutlet weak var descriptionview: UIView!
+    @IBOutlet weak var clvImageUpload: UICollectionView!
+    @IBOutlet weak var collectionImages: UICollectionView!
+    @IBOutlet weak var titleField: UITextField!
+    @IBOutlet weak var descField: SAMTextView!
+    @IBOutlet weak var textlength: UILabel!
+    @IBOutlet weak var stepimageview: UIImageView!
+    
+    @IBOutlet weak var capturedImage: UIImageView!
+    @IBOutlet weak var takePhotoButton: UIButton!
+	@IBOutlet weak var progressHeaderHeight: NSLayoutConstraint!
+    
+    @IBOutlet weak var topheight: NSLayoutConstraint?
+    
+    @IBOutlet weak var tempImage: UIImageView!
+    
+    @IBOutlet weak var btnNext: UIBarButtonItem!
+    
+    var qTitle:String!
+    var qDesc:String!
+    
+    var isImage:Bool!
+    
+    var arrImages = [UIImage]()
+    
+    var tapback : UITapGestureRecognizer!
+    
+    let staticDescFieldText = "Stuck on an academic question? Get help now!"
+    
+    /**
+    Disable the next button
+    Set up UI of titleField
+    Set up UI of descField
+    Setup Gesture Recognizers for background tap and keyboard dismissal
+    Add Done button bar at buttom of toolbar
+    
+    :param: None
+    
+    :returns: None
+    */
+    override func viewDidLoad() {
+        //        capturedImage.userInteractionEnabled = true
+        
+        SEGAnalytics.sharedAnalytics().screen("New Question", properties: [:])
+        
+		ctSelectedIndex = 6
+        stBudget = 1
+        stTime = 1
+        stTimeType = "Hours"
+        stPrivateQues = false
+        stUrgentQues = false
+    
+        btnNext.enabled = false
+        //SHADOWS
+        titleField.delegate = self
+        titleField.layer.shadowOpacity = 0.3
+        titleField.layer.shadowColor = UIColor.blackColor().CGColor
+        titleField.layer.shadowOffset = CGSizeMake(0.0,1.0)
+        titleField.layer.masksToBounds = false
+        titleField.layer.cornerRadius = 0.5
+        titleField.layer.shadowRadius = 2.5
+        titleField.layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0)
+        titleField.becomeFirstResponder()
+        
+        //now set the titleField text
+        //let attr1 = NSMutableAttributedString(string: "Title", attributes: [NSForegroundColorAttributeName: UIColor.lightGrayColor()])
+       // let attr2 = NSAttributedString(string: " (5-80 characters)", attributes: [NSForegroundColorAttributeName: UIColor.redColor()])
+        //attr1.appendAttributedString(attr2)
+        //titleField.attributedPlaceholder = attr1
+        
+        descField.placeholder = staticDescFieldText;
+        descField.delegate = self
+/*
+		descField.text = staticDescFieldText
+//		descField.font = UIFont(name: "OpenSans", size: 17)
+		
+		descField.textColor = UIColor.lightGrayColor()
+        descField.layer.shadowOpacity = 0.3
+        descField.layer.shadowColor = UIColor.blackColor().CGColor
+        descField.layer.shadowOffset = CGSizeMake(0.0,1.0)
+        descField.layer.masksToBounds = false
+        descField.layer.shadowRadius = 2.5
+        descField.layer.cornerRadius = 0.5
+        descField.layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0)
+        descField.clipsToBounds = true
+*/
+        isImage = false
+        
+        //SET navigation bar color and Font
+        
+        
+        tapback = UITapGestureRecognizer(target: self, action: "tapBackground:")
+        var swipe:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target:self, action:"dismissKeyboard")
+        
+        swipe.direction = UISwipeGestureRecognizerDirection.Down
+        
+        self.view.addGestureRecognizer(swipe)
+		addDoneButtonToKeyboard(titleField)
+		addDoneButtonToKeyboard(descField)
+        var height = (self.view.frame.width*1.0)
+        progressHeaderHeight.constant = height/10
+        self.view.layoutIfNeeded()
+    }
+    
+       /**
+    
+    Dismisses the keyboard for title and description text fields.
+    
+    :param: None
+    
+    :returns: None
+    */
+    func dismissKeyboard(){
+        self.titleField.resignFirstResponder()
+        self.descField.resignFirstResponder()
+    }
+	
+    /**
+    
+    Add Done button bar at buttom of toolbar
+
+    :param: textView: the textView activates the keyboard
+    
+    :returns: None
+    */
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	{
+		var toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 44))
+		var leftSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+		var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: Selector("hideKeyboard:"))
+		toolbar.setItems([leftSpace, doneButton], animated: false)
+		if textView.isKindOfClass(UITextField)
+		{
+			(textView as! UITextField).inputAccessoryView = toolbar
+			return
+		}
+		(textView as! UITextView).inputAccessoryView = toolbar
+	}
+    
+    /**
+    
+    Dismisses the keyboard
+    
+    :param: notification: the notification that causes the keyboard to be hidden
+    
+    :returns: None
+    */
+	func hideKeyboard(notification: AnyObject)
+	{
+		
+		if titleField.isFirstResponder(){
+			titleField.resignFirstResponder()
+			return
+		}
+		if descField.isFirstResponder(){
+			descField.resignFirstResponder()
+			return
+		}
+	}
+	
+    //setup keyboard functionality
+    override func viewWillAppear(animated: Bool) {
+        addNotificationsObservers()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        // Restore user previously written text.
+        if (!userInputQuestionTitle.isEmpty) {
+            self.titleField.text = userInputQuestionTitle
+        }
+        if (!userInputQuestionDescription.isEmpty) {
+            self.descField.text = userInputQuestionDescription
+        }
+        if (count(self.titleField.text) > 6) && (!self.descField.text.isEmpty) {
+            self.btnNext.enabled = true
+        }
+    }
+	
+    //remove keyboard functionality
+    override func viewWillDisappear(animated: Bool)
+    {
+        removeNotificationsObservers()
+    }
+    
+    /**
+    Dismisses the keyboard when background is tapped
+    
+    :param: gesture: The tap-background gesture that is detected
+    
+    :returns: None
+    */
+    func tapBackground(gesture: UITapGestureRecognizer){
+        self.titleField.resignFirstResponder()
+        self.descField.resignFirstResponder()
+    }
+    
+    /**
+    
+    I am not exactly sure what this does. I think that it selects the image when you tap it.
+    
+    :param: index: Index of the image that was tapped
+    
+    :returns: None
+    */
+    func tapImage(index imageIndex: Int){
+        PhotoBroswerVC.show(self, type: PhotoBroswerVCTypeZoom, index: 0) { () -> [AnyObject]! in
+            var myArray : NSMutableArray = []
+            let model = PhotoModel()
+            model.mid = 1;
+            model.image = self.arrImages[imageIndex]
+            
+            let cell: ImageCollectionCell = self.clvImageUpload.cellForItemAtIndexPath(NSIndexPath(forRow: imageIndex, inSection: 0)) as! ImageCollectionCell
+            model.sourceImageView = cell.imvUpload
+            
+            myArray.addObject(model)
+            return myArray as [AnyObject]
+            
+        }
+    }
+    
+    /**
+    Remove image from collection view
+    :param: sender: The delete button is pressed
+    :returns: None
+    */
+    func deleteImage(sender: UIButton){
+       
+        self.arrImages.removeAtIndex(sender.tag)
+        if (self.arrImages.count == 0){
+            isImage = false
+            descriptionview.hidden = false
+            
+            if(!self.descField.text.isEmpty && !self.titleField.text.isEmpty) {
+                self.btnNext.enabled = true
+            } else {
+                self.btnNext.enabled = false
+            }
+        }
+        else {
+            self.btnNext.enabled = true
+        }
+        
+        self.clvImageUpload.reloadData()
+        
+    }
+    
+    /**
+    
+    Detect when the touches ended, not exactly sure for whawt purpose
+    
+    :returns: None
+    */
+    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+        let touch:UITouch? = touches.first as? UITouch
+        
+        if touch?.view == capturedImage {
+            println("captured Image has been tapped by the user")
+            
+            //segue to modally presented full sized image
+            let fullImageVC = self.storyboard?.instantiateViewControllerWithIdentifier("fullImage") as! FullImageViewController
+            fullImageVC.passedImage = capturedImage.image
+            self.presentViewController(fullImageVC, animated: true, completion: nil)
+        }
+    }
+    
+    /**
+    
+    Helper method to do JSON parsing
+    
+    :param: request: the request to execute and get the json back from
+    :param: callback: the callback to execute after the request completes
+    
+    :returns: None
+    */
+    func httpParse(request: NSURLRequest!, callback: (NSDictionary, String?) -> Void) {
+        var session = NSURLSession.sharedSession()
+        var task = session.dataTaskWithRequest(request){
+            (data, response, error) -> Void in
+            if error != nil {
+            } else {
+                var result = NSString(data: data, encoding:
+                    NSASCIIStringEncoding)!
+                var jsonResult: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options:NSJSONReadingOptions.AllowFragments, error: nil)
+                if let returnVal: AnyObject = jsonResult {
+                    callback(jsonResult! as! NSDictionary, nil)
+                } else{
+                    println("try again \(result)")
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    
+    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool {
+        if (count(titleField.text) <= 5 && identifier == "showCategory"){
+           
+            return false
+        }
+        else if (count(titleField.text) >= 80 && identifier == "showCategory"){
+            
+            return false
+        }
+
+        else{
+            return true
+        }
+    }
+    /**
+    
+    Prepare for segue to category view controller
+    
+    :param: segue: The segue to execute
+    :param: sender: The object that sent the segue
+    
+    :returns: None
+    */
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == "showCategory" {
+            // Restore user previously written text.
+            if (!self.titleField.text.isEmpty) {
+                userInputQuestionTitle = self.titleField.text
+                println ("Question Title saved!")
+            }
+            if(!self.descField.text.isEmpty) {
+                userInputQuestionDescription = self.descField.text
+                println ("Question Description saved!")
+            }
+            
+            
+            qTitle = titleField.text
+            
+            qDesc = "<p>" + descField.text.stringByReplacingOccurrencesOfString("\n", withString:"</p><p>") + "</p>"
+            
+            println(descField.text)
+            
+            var isPic:String
+            if(isImage == true){
+                isPic = "1"
+            }
+            else{
+                isPic = "0"
+            }
+            
+            let parameters = [
+                "token": token,
+                "title": qTitle,
+                "description":qDesc,
+                "imagecount":String(self.arrImages.count),
+                "isPic":isPic
+            ]
+            
+            let categoryVC:CategoryViewController = segue.destinationViewController as! CategoryViewController
+            categoryVC.selectedIndex = ctSelectedIndex
+            if let id: AnyObject = sender{
+                categoryVC.parameters = parameters
+                categoryVC.arrImages = self.arrImages
+               
+            }else{
+                println("no question id to pass")
+            }
+        } else if segue.destinationViewController is FeedViewController {
+            // Restore user previously written text.
+            if (!self.titleField.text.isEmpty) {
+                userInputQuestionTitle = self.titleField.text
+                println ("Question Title saved!")
+            }
+            if(!self.descField.text.isEmpty) {
+                userInputQuestionDescription = self.descField.text
+                println ("Question Description saved!")
+            }
+            
+            //SEGMENT_CODE: TRACKER
+            SEGAnalytics.sharedAnalytics().track("Cancelled Creating New Question")
+        }
+    }
+    
+    //Determine when next button is disabled
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        var txtAfterUpdate:NSString = textField.text as NSString
+        txtAfterUpdate = txtAfterUpdate.stringByReplacingCharactersInRange(range, withString: string)
+        if(txtAfterUpdate.length < 1){
+            self.btnNext.enabled = false
+        } else if(!self.descField.text.isEmpty){
+            // Textfield was edited
+                
+            self.btnNext.enabled = true
+        } else if (self.arrImages.count > 0) {
+            // Image is uploaded
+            self.btnNext.enabled = true
+        } else{
+            self.btnNext.enabled = false
+        }
+        
+        if (count(self.titleField.text) <= 5)
+        {
+            self.titleField.textColor = UIColor.redColor()
+            self.btnNext.enabled = false
+        }
+        else if (count(self.titleField.text) >= 80)
+        {
+            self.btnNext.enabled = false
+            self.titleField.text = self.titleField.text.substringToIndex(advance(self.titleField.text.startIndex, 80))
+        }
+        else
+        {
+            self.titleField.textColor = UIColor.blackColor()
+        }
+
+        return true
+    }
+    
+    //Determine when next button is disabled
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        var txtAfterUpdate:NSString = textView.text as NSString
+        txtAfterUpdate = txtAfterUpdate.stringByReplacingCharactersInRange(range, withString: text)
+        if(txtAfterUpdate.length < 1){
+            self.btnNext.enabled = false
+        }else if(!self.titleField.text.isEmpty){
+            self.btnNext.enabled = true
+        }
+        
+        userInputQuestionDescription = txtAfterUpdate as String
+        
+        return true
+    }
+    
+    ////////////////////////////////
+    //capture photo code starts
+    
+    var captureSession: AVCaptureSession?
+    var stillImageOutput: AVCaptureStillImageOutput!
+    var previewLayer: AVCaptureVideoPreviewLayer!
+    
+    /**
+    
+    Choose UIAlertAction when the user presses the take photo button.
+    
+    :param: sender: The take photo button
+    
+    :returns: None
+    */
+    @IBAction func didPressTakePhoto(sender: AnyObject) {
+        
+        var alert:UIAlertController=UIAlertController(title: "Choose Image", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+        
+        var cameraAction = UIAlertAction(title: "Camera", style: UIAlertActionStyle.Default)
+            {
+                UIAlertAction in
+                self.presentCamera()
+                
+        }
+        var galleryAction = UIAlertAction(title: "Gallery", style: UIAlertActionStyle.Default)
+            {
+                UIAlertAction in
+                self.presentGallery()
+        }
+        var cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel)
+            {
+                UIAlertAction in
+                
+        }
+        // Add the actions
+        alert.addAction(cameraAction)
+        alert.addAction(galleryAction)
+        alert.addAction(cancelAction)
+        // Present the actionsheet
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone
+        {
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+    }
+    
+    var cameraUI: UIImagePickerController = UIImagePickerController()
+    
+    /**
+    
+    Presents image picker from camera images
+    
+    :param: None
+    
+    :returns: None
+    */
+    func presentCamera()
+    {
+        cameraUI = UIImagePickerController()
+        cameraUI.delegate = self
+        cameraUI.sourceType = UIImagePickerControllerSourceType.Camera
+        cameraUI.mediaTypes = [kUTTypeImage]
+        cameraUI.allowsEditing = false
+        
+        self.presentViewController(cameraUI, animated: true, completion: nil)
+    }
+    
+    /**
+    
+    Presents the image gallery
+    
+    :param: None
+    
+    :returns: None
+    */
+    func presentGallery()
+    {
+        cameraUI = UIImagePickerController()
+        cameraUI.delegate = self
+        cameraUI.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        cameraUI.mediaTypes = [kUTTypeImage]
+        cameraUI.allowsEditing = false
+        
+        self.presentViewController(cameraUI, animated: true, completion: nil)
+    }
+    
+    /**
+    
+    Callback for when the imagePicker is cancelled
+    :param: picker: the picker that was cancelled
+    :returns: None
+    */
+    func imagePickerControllerDidCancel(picker:UIImagePickerController)
+    {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    /**
+    
+    Callback for when the imagePicker is finished picking images
+    
+    :param: picker: the picker that is finished
+    :param: info: dummy parameter
+    
+    :returns: None
+    */
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
+        
+        let image = info[UIImagePickerControllerOriginalImage] as? UIImage
+        self.arrImages.append(image!)
+        self.clvImageUpload.reloadData()
+        isImage = true
+        descriptionview.hidden = true
+        
+        if (!self.titleField.text.isEmpty) {
+            self.btnNext.enabled = true
+        }
+
+        dismissViewControllerAnimated(true, completion:nil)
+    }
+    
+    let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+    
+    /**
+    
+    Present a popup
+    :param: sender: The button that causes this popup to appear
+    :returns: None
+    */
+    @IBAction func subscribePopup(sender: UIButton) {
+        let overlayVC = storyboard?.instantiateViewControllerWithIdentifier("overlayViewController") as! UIViewController
+        prepareOverlayVC(overlayVC)
+        presentViewController(overlayVC, animated: true, completion: nil)
+        
+    }
+    
+    /**
+    
+    Helper method to present a popup
+    :param: overlayVC: The View controller in which to present the popup.
+    :returns: None
+    */
+    private func prepareOverlayVC(overlayVC: UIViewController) {
+        overlayVC.transitioningDelegate = overlayTransitioningDelegate
+        overlayVC.modalPresentationStyle = .Custom
+    }
+    
+    /**
+    Update the number of characters left label
+    :param: textView: the textView with the characters that changed
+    :returns: None
+    */
+    func textViewDidChange(textView: UITextView) {
+        self.textlength.text = String(format: "%d/500", count(textView.text))
+    }
+    
+    // MARK: UICollectionViewDatasource
+    
+    /**
+    
+    Get the number of Items in the collectionView
+    :param: collectionView: The collection view with the images
+    :param: section: The section of the collection view that we want to know about (here there is only 1 section)
+    
+    :returns: the number of images in the section of the collectionview
+    */
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
+        return self.arrImages.count
+    }
+    
+    /**
+    Load each cell of the collection View
+    
+    :param: collectionView: The collection view with the images    
+    :param: indexPath: The indexPath of the collection view that we want to know about 
+    :returns: UICollectionViewCell
+    */
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell{
+        let cell: ImageCollectionCell = collectionView.dequeueReusableCellWithReuseIdentifier("image_cell", forIndexPath: indexPath) as! ImageCollectionCell
+        cell.imvUpload.image = self.arrImages[indexPath.row]
+        cell.btnDeleteImgae.tag = indexPath.row
+        cell.btnDeleteImgae.addTarget(self, action: "deleteImage:", forControlEvents: UIControlEvents.TouchUpInside)
+        return cell
+    }
+    
+    /**
+    
+    Get the minimum Line spacing for a given section in the collection view
+    
+    :param: collectionView: The collection view with the images
+    :param: section: The section of the collection view that we want to know about (here there is only 1 section)
+    :param: collectionViewLayout: The default layout is used here
+    
+    :returns: the minimum line spacing
+    */
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat{
+        return 3
+    }
+    
+    /**
+    
+    Get the minimum inter-item Line spacing for a given section in the collection view
+    
+    :param: collectionView: The collection view with the images
+    :param: section: The section of the collection view that we want to know about (here there is only 1 section)
+    :param: collectionViewLayout: The default layout is used here
+    
+    :returns: the minimum inter-item line spacing
+    */
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat{
+        return 1
+    }
+    
+    /**
+    
+    This method is used when an item in the collection view is tapped
+    :param: collectionView: The collection view with the images
+    :param: indexPath: The indexPath of the collection view that we want to know about
+    :returns: None
+    */
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath){
+        self.tapImage(index: indexPath.row)
+    }
+    
+    /**
+    
+    Function executed when the keyboard is about to hide
+    
+    :param: notification: The notification that causes the keyboard to be hidden
+    
+    :returns: None
+    */
+    func keyboardWillHide(notification: NSNotification)
+    {
+        self.view.removeGestureRecognizer(self.tapback)
+        self.view.userInteractionEnabled = true
+    }
+    
+    /**
+    
+    Function executed when the keyboard is about to show
+    
+    :param: notification: The notification that causes the keyboard to be shown
+    
+    :returns: None
+    */
+    func keyboardWillShow(notification: NSNotification)
+    {
+        self.view.addGestureRecognizer(self.tapback)
+        self.view.userInteractionEnabled = true
+    }
+    
+    /**
+    
+    Setup Keyboard Functionality by using NSnotification
+    
+    :param: None
+    
+    :returns: None
+    */
+    func addNotificationsObservers()
+    {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+<<<<<<< HEAD
+	func textViewDidBeginEditing(enterReasonTextView: UITextView) {
+		if (enterReasonTextView.textColor == UIColor.lightGrayColor()) {
+//            if self.descField.text == staticDescFieldText {
+            if(enterReasonTextView.textColor == UIColor.lightGrayColor()){
+                enterReasonTextView.text = ""
+            }
+//			enterReasonTextView.font = UIFont(name: "OpenSans", size: 17)
+			enterReasonTextView.textColor = UIColor.blackColor()
+		}
+	}
+	func textViewDidEndEditing(enterReasonTextView: UITextView) {
+		if enterReasonTextView.text.isEmpty {
+			enterReasonTextView.text = "Stuck on a problem? Describe your question"
+			//enterReasonTextView.font = UIFont(name: "OpenSans", size: 17)
+			enterReasonTextView.textColor = UIColor.lightGrayColor()
+		}
+	}
+=======
+//	func textViewDidBeginEditing(enterReasonTextView: UITextView) {
+//		if (enterReasonTextView.textColor == UIColor.lightGrayColor()) {
+//            if self.descField.text == staticDescFieldText {
+//                enterReasonTextView.text = nil                
+//            }
+////			enterReasonTextView.font = UIFont(name: "OpenSans", size: 17)
+//			enterReasonTextView.textColor = UIColor.blackColor()
+//		}
+//	}
+//	func textViewDidEndEditing(enterReasonTextView: UITextView) {
+//		if enterReasonTextView.text.isEmpty {
+//			enterReasonTextView.text = "Stuck on a problem? Describe your question"
+//			//enterReasonTextView.font = UIFont(name: "OpenSans", size: 17)
+//			enterReasonTextView.textColor = UIColor.lightGrayColor()
+//		}
+//	}
+>>>>>>> e46a4669bbededf4db0388fa687d13eace1284c7
+    /**
+	
+    Remove Keyboard Functionality by using NSnotification
+	
+    :param: None
+    
+    :returns: None
+    */
+    func removeNotificationsObservers()
+    {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    
+}
+
+extension NSMutableData {
+    func appendString(string: String) {
+        let data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        appendData(data!)
+    }
+}
+// capture photo ends

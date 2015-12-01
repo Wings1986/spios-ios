@@ -1,0 +1,1866 @@
+AnswerModel.swift
+	init(dic : NSDictionary)
+CustomSlider.swift
+	class CustomSlider : UISlider
+TutorViewController.swift
+	class TutorViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate
+	@IBOutlet weak var tableViewFooter: MyFooter!
+	var test:NSDictionary!
+	var newthing = [NSDictionary]()
+	var nPage:Int!
+	var currentTaskId:Int!
+	let LOADMORE_HEIGHT:CGFloat = 60
+	let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+	var lastCounts:Int!
+	var postCount:Int!
+	@IBOutlet weak var tableView: UITableView!
+	@IBOutlet weak var tblSubject: UITableView!
+	@IBOutlet weak var headerbar: UIView!
+	@IBOutlet weak var topMarginConstraint: NSLayoutConstraint?
+	@IBOutlet weak var bottomMarginConstraint: NSLayoutConstraint?
+	@IBOutlet weak var subjectBotton: NSLayoutConstraint?
+	@IBOutlet weak var subjectView : UIView!
+	@IBOutlet weak var dropdown : UIImageView!
+	let pickerData : NSMutableArray = [
+	var selectedSubject : NSMutableArray = []
+	var dataArray :[AnswerQuestionModel] = [AnswerQuestionModel]()
+	var questionArray:[AnswerQuestionModel] = [AnswerQuestionModel]()
+	var keyboardSize : CGRect!
+	var isShow : Bool!
+	override func viewDidLoad()
+	func dismissKeyboard()
+	@IBAction func goToProfile(sender:UIButton)
+	func tapSubject(gesture: UITapGestureRecognizer)
+	func keyboardWillShow(notification: NSNotification)
+	func keyboardWillHide(notification: NSNotification)
+	override func viewWillDisappear(animated: Bool)
+	override func viewWillAppear(animated: Bool)
+	lazy var refreshControl: UIRefreshControl =
+	func handleRefresh(refreshControl: UIRefreshControl)
+	func scrollViewWillBeginDragging(scrollView: UIScrollView)
+	func scrollViewDidScroll(scrollView: UIScrollView)
+	func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool)
+	func loadMore()
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+	@IBAction func menuButtonTouched(sender: AnyObject)
+	func getMyProfile()
+	func getTutor()
+	func httpParseArr(request: NSURLRequest!, callback: ([NSDictionary], String?) -> Void)
+	func enterQuestion()
+	func enterQuestionDetail(question:QuestionModel)
+	@IBAction func postQuestion(sender: UIButton)
+	@IBAction func viewQuestion(sender: UIButton)
+	@IBAction func unwindSegueToFeedVC(segue: UIStoryboardSegue)
+    {}
+	@IBOutlet weak var tfSearch: UITextField!
+	@IBOutlet weak var btnSearch: UIButton!
+	@IBOutlet weak var btnClose: UIButton!
+	@IBOutlet weak var searchView: UIVisualEffectView!
+	func showSearchBar()
+	func hideSearchBar()
+	@IBAction func searchKeyChanged(sender: UITextField)
+	func dataArrayWithFilter(filterkey:String, originArray:NSArray)->NSArray
+	@IBAction func onSearch(sender: AnyObject)
+	@IBAction func onClose(sender: AnyObject)
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+SocialLoginView.swift
+	class SocialLoginView: UIView, UIWebViewDelegate
+	@IBOutlet weak var webview: UIWebView!
+	var socialURL : String!
+	var parentview : LoginViewController!
+	var signupview : SignupViewController!
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+	func loadwebview()
+	func webViewDidFinishLoad(webView: UIWebView)
+ProfileModel.swift
+	public class ProfileModel: NSObject
+	init(dic : NSDictionary)
+BHExpandingTextViewInternal.swift
+	class BHExpandingTextViewInternal: UITextView
+	override init(frame: CGRect, textContainer: NSTextContainer?)
+	required init(coder aDecoder: NSCoder)
+BouncyViewControllerAnimator.swift
+	class BouncyViewControllerAnimator : NSObject, UIViewControllerAnimatedTransitioning
+	func transitionDuration(transitionContext: UIViewControllerContextTransitioning) -> NSTimeInterval
+	func animateTransition(transitionContext: UIViewControllerContextTransitioning)
+QuestionBidCell.swift
+	@IBOutlet weak var btnDetail1: UIButton!
+	override public func awakeFromNib()
+	override public func setSelected(selected: Bool, animated: Bool)
+FeedCell.swift
+	class FeedCell: UITableViewCell
+	@IBOutlet weak var imvLogoCircle2: UIImageView!
+	@IBOutlet weak var imvLogoCircle1: UIImageView!
+	@IBOutlet weak var imvLogo: UIImageView!
+	@IBOutlet weak var lblTitle: UILabel!
+	@IBOutlet weak var lblSubTitle: UILabel!
+	@IBOutlet weak var lblNumOfAnswers: UILabel!
+	@IBOutlet weak var lblTimesAgo: UILabel!
+	@IBOutlet weak var imvReadMark: UIImageView!
+	@IBOutlet weak var lblUnread: UILabel!
+	@IBOutlet weak var imvLogoMask: UIImageView!
+	@IBOutlet weak var timeLabel: UILabel!
+	@IBOutlet weak var priceLabel: UILabel!
+	@IBOutlet weak var lblStatusLabel: UILabel!
+	@IBOutlet weak var lblDeadline: UILabel!
+	@IBOutlet weak var loading: UIActivityIndicatorView!
+	override func awakeFromNib()
+ConfirmTutorAnimationViewController.swift
+	@IBOutlet weak var backgroundImage: UIImageView!
+	@IBOutlet weak var rightImage: UIImageView!
+	@IBOutlet weak var leftImage: UIImageView!
+	@IBOutlet weak var chatIcon: UIImageView!
+	@IBOutlet weak var secondImage: UIImageView!
+	@IBOutlet weak var ellipsis: UIImageView!
+	@IBOutlet weak var leftConstraint: NSLayoutConstraint!
+	@IBOutlet weak var rightConstraint: NSLayoutConstraint!
+	var right: UIImage!
+	var left: UIImage!
+	var questionModel: QuestionModel!
+	var answer_id: String!
+	var tutorImageUrl : String?
+	var tutorName : String?
+	class func colorizeImage(image: UIImage, color: UIColor) -> UIImage
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLoad()
+	override func viewDidAppear(animated: Bool)
+	override func didReceiveMemoryWarning()
+	override func viewWillDisappear(animated: Bool)
+UserLogin.swift
+	public class UserLogin: NSManagedObject
+PaymentNotificationPopoverView.swift
+	protocol PaymentNotificationPopoverViewDelegate
+	func onDismiss()
+	class PaymentNotificationPopoverView: UIView
+	var delegate : PaymentNotificationPopoverViewDelegate?
+	var title:String? = ""
+	var timeStamp:Double? = 0
+	var userName:String? = ""
+	var price:String? = ""
+	var payPal:Double?
+	var creditCard:Double?
+	var balance:Double?
+	let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+	var originalPoint: CGPoint!
+	@IBOutlet var subjectQuestionLabel: UILabel!
+	@IBOutlet var currentDateLabel: UILabel!
+	@IBOutlet var tutorNameLabel: UILabel!
+	@IBOutlet var firstPaymentLabel: UILabel!
+	@IBOutlet var firstPaymentAmount: UILabel!
+	@IBOutlet var secondPaymentLabel: UILabel!
+	@IBOutlet var secondPaymentAmount: UILabel!
+	@IBOutlet var totalAmountLabel: UILabel!
+	@IBOutlet weak var secondHeightConstraint: NSLayoutConstraint!
+	@IBOutlet var totalTopConstraint: NSLayoutConstraint!
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+	func dragged(gestureRecognizer: UIPanGestureRecognizer) -> Void
+	func updateOverlay(distance: CGFloat)
+	func initValue()
+	func fillLabels()
+	override func didMoveToWindow()
+	@IBAction func onDismiss(sender: UIButton)
+	@IBAction func okayButtonPressed(sender: UIButton)
+AnsweredQuestionPopoverView.swift
+	protocol AnsweredQuestionPopoverViewDelegate
+	func onDismiss()
+	func onGotoDetail(question:QuestionModel)
+	class AnsweredQuestionPopoverView: UIView
+	var delegate : AnsweredQuestionPopoverViewDelegate?
+	var originalPoint: CGPoint!
+	var question:QuestionModel!
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+	func dragged(gestureRecognizer: UIPanGestureRecognizer) -> Void
+	func updateOverlay(distance: CGFloat)
+	@IBAction func onDismiss(sender: UIButton)
+	@IBAction func onOkay(sender: UIButton)
+JWStarRating.swift
+	class JWStarRating: UIControl
+	var spaceBetweenStar: CGFloat = 10
+	var starCount: Int = 5
+	var starColor: UIColor = UIColor(red: 200.0/255.0, green: 200.0/255.0, blue: 200.0/255.0, alpha: 1)
+	var starHighlightColor: UIColor = UIColor(red: 88.0/255.0, green: 88.0/255.0, blue: 88.0/255.0, alpha: 1)
+	var ratedStarIndex: Int = 5
+	var starLocation: Array<CGFloat> = Array()
+	required init(coder aDecoder: NSCoder)
+	override init(frame: CGRect)
+	convenience init(frame: CGRect, starCount: Int, starColor: UIColor, starHighlightColor: UIColor, spaceBetweenStar: CGFloat)
+	override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool
+	override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool
+	override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent)
+CategoryViewController.swift
+	protocol CategoryViewProtocal
+	@IBOutlet weak var tfSearch: UITextField!
+	@IBOutlet weak var btSearch: UIButton!
+	@IBOutlet weak var picker: UIPickerView!
+	@IBOutlet weak var btPopular1: UIButton!
+	@IBOutlet weak var btPopular2: UIButton!
+	@IBOutlet weak var btPopular3: UIButton!
+	@IBOutlet weak var btPopular4: UIButton!
+	@IBOutlet weak var progressHeaderHeight: NSLayoutConstraint!
+	let pickerData : NSMutableArray = [
+	var btPopular1Title: String!
+	var btPopular2Title: String!
+	var btPopular3Title: String!
+	var btPopular4Title: String!
+	var selectedIndex: Int = 6
+	var parameters : Dictionary<String, AnyObject> = [:]
+	var image : UIImage!
+	var arrImages = [UIImage]()
+	@IBOutlet weak var viewContent: UIView!
+	@IBOutlet weak var navigation: UINavigationItem!
+	var isRowOnLoad = false
+	var buttonTapped : UIButton?
+	let blueColor = UIColor(netHex: 0x2ABFFF)
+	let strongblueColor = UIColor(netHex: 0x2ABFFF)
+	let greyColor = UIColor(netHex: 0x000000)
+	override func viewDidLoad()
+	override func  viewDidDisappear(animated: Bool)
+	override func didReceiveMemoryWarning()
+	func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int
+	override func viewWillAppear(animated: Bool)
+	func findSubject(subjectName : String) -> [Int]
+	override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
+	func textFieldShouldReturn(userText: UITextField) -> Bool
+	func dismissKeyboard()
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+	func textFieldDidChange(textField: UITextField)
+	func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+	func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+	func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+	func pickerView(pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString?
+	@IBAction func backPressed(sender: UIButton)
+	@IBAction func searchButtonTapped(sender: UIButton)
+	@IBAction func btPopular1Tapped(sender: UIButton)
+	@IBAction func btPopular2Tapped(sender: UIButton)
+	@IBAction func btPopular3Tapped(sender: UIButton)
+	@IBAction func btPopular4Tapped(sender: UIButton)
+	@IBAction func btComplete(sender: UIButton)
+	func changeButtonTapped(button : UIButton)
+	func changeButtonInicialTapped(button : UIButton)
+	func changePickerRow(subject: String)
+	func contains(find: String) -> Bool
+	convenience init(red: Int, green: Int, blue: Int)
+	convenience init(netHex:Int)
+DiscussionModel.swift
+	init(dic : NSDictionary)
+ReferralBonusPopoverView.swift
+	protocol ReferralBonusPopoverViewDelegate
+	func onDismiss()
+	class ReferralBonusPopoverView: UIView
+	var delegate : ReferralBonusPopoverViewDelegate?
+	@IBOutlet weak var promoMoneyAmount: UILabel!
+	let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+	var originalPoint: CGPoint!
+	@IBOutlet var friendSignupLabel: UILabel!
+	@IBOutlet var signupTitle: UILabel!
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+	func dragged(gestureRecognizer: UIPanGestureRecognizer) -> Void
+	func updateOverlay(distance: CGFloat)
+	@IBAction func onDismiss(sender: UIButton)
+	@IBAction func awesomeButtonPressed(sender: UIButton)
+QuestionPostedViewController.swift
+	@IBOutlet weak var actInd: UIActivityIndicatorView!
+	@IBOutlet weak var yConstraint: NSLayoutConstraint!
+	@IBOutlet weak var rocketView: UIImageView!
+	@IBOutlet weak var btnExpand: UIButton!
+	var questionModel: QuestionModel?
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLoad()
+	override func viewDidAppear(animated: Bool)
+	override func didReceiveMemoryWarning()
+	override func viewWillDisappear(animated: Bool)
+imageQuestionCell.swift
+	@IBOutlet weak var IMG: UIImageView!
+	override func awakeFromNib()
+QuestionBidFooterController.swift
+	protocol QuestionBidFooterControllerDelegate
+	func openBidView()
+	func closeBidView()
+	func selectBid(row:Int)
+	func showBidProfile(row:Int)
+	@IBOutlet weak var toolView: UIView!
+	@IBOutlet weak var btnExpand: UIButton!
+	@IBOutlet weak var mTableView: UITableView!
+	@IBOutlet weak var lbTutorTitle: UILabel!
+	@IBOutlet weak var lbStandardTier: UILabel!
+	@IBOutlet weak var lbBidTitle: UILabel!
+	@IBOutlet weak var imgExpand: UIImageView!
+	@IBOutlet weak var btnHowTowork: UIButton!
+	var delegate:QuestionBidFooterControllerDelegate?
+	var dataTutor = []
+	var tutorCell = NSMutableDictionary()
+	var bExpand:Bool = false
+	var category:String? = "MATH"
+	override func viewDidLoad()
+	@IBAction func leftButtonPressed(sender: UIButton)
+	@IBAction func rightButtonPressed(sender: UIButton)
+	func reloadBidList()
+	override func didReceiveMemoryWarning()
+	func actDetail(sender:UIButton)
+	func respondToSwipeGesture(gesture: UISwipeGestureRecognizer)
+	func respondToTapGesture(gesture: UITapGestureRecognizer)
+	@IBAction func onClickExpand(sender: AnyObject)
+	func openView()
+	func closeView()
+	@IBAction func showBidGuidPopupview(sender: AnyObject)
+	func onDismiss()
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+WelcomeViewController.swift
+	class WelcomeViewController: UIViewController
+	@IBOutlet weak var view1: UIView!
+	@IBOutlet weak var view2: UIView!
+	@IBOutlet weak var view3: UIView!
+	@IBOutlet weak var view1contstraint: NSLayoutConstraint?
+	@IBOutlet weak var view2contstraint: NSLayoutConstraint?
+	@IBOutlet weak var view3contstraint: NSLayoutConstraint?
+	override func viewDidLoad()
+	override func didReceiveMemoryWarning()
+	override func viewWillAppear(animated: Bool)
+	override func viewDidAppear(animated: Bool)
+	@IBAction func clickMain(sender:UIButton)
+	func enterFeed()
+QuestionDetailCell.swift
+	class QuestionDetailCell: UITableViewCell
+	@IBOutlet weak var ivAvatar: UIImageView!
+	@IBOutlet weak var lbName: UILabel!
+	@IBOutlet weak var lbCount: UILabel!
+	@IBOutlet weak var lbTimestamp: UILabel!
+	@IBOutlet weak var imageEmboss: UIImageView!
+	@IBOutlet weak var lbDetail: UIWebView!
+	override func awakeFromNib()
+	override func setSelected(selected: Bool, animated: Bool)
+TutorAnswerFooterController.swift
+	protocol TutorAnswerFooterControllerDelegate:BHExpandingTextViewDelegate
+	func onSubmit(message:String)
+	func onAnswer()
+	func changeTutorFooterHeight(height:CGFloat)
+	class TutorAnswerFooterController: UIViewController, UITextFieldDelegate, BHInputbarDelegate
+	@IBOutlet weak var messageBox: BHInputbar!
+	@IBOutlet weak var constraintMessageHeight: NSLayoutConstraint!
+	@IBOutlet weak var btnAnswer: UIButton!
+	var delegate:TutorAnswerFooterControllerDelegate?
+	var bAnswered:Bool? = false
+	var isResize:Bool? = false
+	override func viewDidLoad()
+	func dismissKeyboard()
+	override func didReceiveMemoryWarning()
+	func clearComment()
+	func setAnswered(answered: Bool)
+	@IBAction func onClickMessage(sender: AnyObject)
+	func expandingTextView(expandingTextView: BHExpandingTextView!, didChangeHeight height: Float)
+DLRootViewController.swift
+	class DLRootViewController: DLHamburguerViewController
+	override func viewDidLoad()
+	override func viewWillDisappear(animated: Bool)
+	override func didReceiveMemoryWarning()
+	override func awakeFromNib()
+QuestionTutorCell.swift
+	class QuestionTutorCell: UITableViewCell
+	override func awakeFromNib()
+	override func setSelected(selected: Bool, animated: Bool)
+PromotionShareViewController.swift
+	class PromotionShareViewController: UIViewController, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate, SphereMenuDelegate
+	@IBOutlet weak var promoCode: UITextField!
+	@IBOutlet weak var bottomView: UIView!
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLoad()
+	func dismissKeyboard()
+	override func didReceiveMemoryWarning()
+	@IBAction func onCopy(sender: UIButton)
+	@IBAction func onEmailInvite(sender: AnyObject)
+	func configuredMailComposeViewController() -> MFMailComposeViewController
+	func showSendMailErrorAlert()
+	func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!)
+	@IBAction func onTextInvite(sender: AnyObject)
+	func messageComposeViewController(controller: MFMessageComposeViewController!, didFinishWithResult result: MessageComposeResult)
+	override func viewWillDisappear(animated: Bool)
+	@IBAction func onShare(sender: UIButton)
+	func sphereDidSelected(index: Int)
+	func shareTwitter()
+	func shareFacebook()
+BHExpandingTextView.swift
+	@objc protocol BHExpandingTextViewDelegate:NSObjectProtocol
+	optional func expandingTextViewShouldBeginEditing(expandingTextView : BHExpandingTextView!)-> Bool
+	optional func expandingTextViewShouldEndEditing(expandingTextView : BHExpandingTextView!)-> Bool
+	optional func expandingTextViewDidBeginEditing(expandingTextView : BHExpandingTextView!)
+	optional func expandingTextViewDidEndEditing(expandingTextView : BHExpandingTextView!)
+	optional func expandingTextView(expandingTextView : BHExpandingTextView!,shouldChangeTextInRange range:NSRange,replacementText text:String!)-> Bool
+	optional func expandingTextViewDidChange(expandingTextView : BHExpandingTextView!)
+	optional func expandingTextView(expandingTextView : BHExpandingTextView!,willChangeHeight height:Float)
+	optional func expandingTextView(expandingTextView : BHExpandingTextView!,didChangeHeight height:Float)
+	optional func expandingTextViewDidChangeSelection(expandingTextView : BHExpandingTextView!)
+	optional func expandingTextViewShouldReturn(expandingTextView : BHExpandingTextView!)-> Bool
+	class BHExpandingTextView: UIView,UITextViewDelegate
+	let kTextInsetX : Float! =  4
+	let kTextInsetBottom :Int! = 0
+	var internalTextView :UITextView = UITextView()
+	var maximumNumberOfLines :UInt!
+	var minimumNumberOfLines :UInt!
+	var animateHeightChange :Bool!
+	var delegate :BHExpandingTextViewDelegate?
+	var text :String!
+	var font :UIFont!
+	var textColor :UIColor!
+	var textAlignment :NSTextAlignment!
+	var selectedRange :NSRange!
+	var editable :Bool!
+	var textViewBackgroundImage :UIImageView!
+	var placeholder :String!
+	var placeholderLabel :UILabel!
+	var minimumHeight :Float! = 0
+	var maximumHeight :Float! = 0
+	var forceSizeUpdate :Bool!
+	override init (frame : CGRect)
+	convenience init ()
+	required init(coder aDecoder: NSCoder)
+	func initFrame(frame: CGRect)
+	func setFrame(aframe :CGRect!)
+	override func sizeToFit()
+	func setMaximumNumberOfLines(n:UInt)
+	func measureHeightOfUITextView(textView : UITextView!)-> Float
+	func setMinimumNumberOfLines(m: UInt)
+	func hasText()->Bool
+	func scrollRangeToVisible(range: NSRange)
+	func clearText()
+	func didChangeText()
+	func getHeight()-> Int
+	func textViewDidChange(textView:UITextView)
+	func textViewShouldBeginEditing(textView: UITextView) -> Bool
+	func textViewShouldEndEditing(textView: UITextView) -> Bool
+	func textViewDidBeginEditing(textView: UITextView)
+	func textViewDidEndEditing(textView: UITextView)
+	func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+	func textViewDidChangeSelection(textView: UITextView)
+HowTobidPopOverView.swift
+	protocol HowTobidPopOverDelegate
+	func onDismiss()
+	class HowTobidPopOverView: UIView
+	var delegate : HowTobidPopOverDelegate?
+	var originalPoint: CGPoint!
+	var question:QuestionModel!
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+	func dragged(gestureRecognizer: UIPanGestureRecognizer) -> Void
+	func updateOverlay(distance: CGFloat)
+	@IBAction func onDismiss(sender: UIButton)
+	@IBAction func onOkay(sender: UIButton)
+ConfirmTutorViewController.swift
+	@IBOutlet weak var titleView: UIView!
+	@IBOutlet weak var messageView: UIView!
+	@IBOutlet weak var buttonView: UIView!
+	@IBOutlet weak var tablview: UITableView!
+	@IBOutlet weak var discussBar: BHInputbar!
+	@IBOutlet weak var lbUniversity: UILabel!
+	@IBOutlet weak var lbMajor: UILabel!
+	@IBOutlet weak var lbRating: UILabel!
+	@IBOutlet weak var lblRating: UILabel!
+	@IBOutlet weak var lbName: UILabel!
+	@IBOutlet weak var lbPrice: UILabel!
+	@IBOutlet weak var lbHours: UILabel!
+	@IBOutlet weak var lbTime: UILabel!
+	@IBOutlet weak var avatar: UIImageView!
+	@IBOutlet weak var discussBarHeight: NSLayoutConstraint!
+	var IsPaymentClicked:Bool = false
+	@IBOutlet weak var textviewMarginConstraint: NSLayoutConstraint?
+	var tutorID : String?
+	var keyboardSize : CGRect!
+	var studentAvatar: UIImage!
+	var mTextView:UITextView?
+	var studentName : String?
+	var studentImageUrl : String?
+	var tutorImageUrl : String?
+	var tutorModel : BidModel?
+	var questionModel : QuestionModel?
+	var attributStrings = NSMutableArray()
+	var temptablebottom: CGFloat!
+	var tempfooterbottom: CGFloat!
+	var keyboardIsVisible :Bool = false
+	var startLocation : CGPoint!
+	override func viewDidAppear(animated: Bool)
+	override func viewDidLoad()
+	func panDetected(gesture: UIPanGestureRecognizer)
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool
+	override func didReceiveMemoryWarning()
+	override func viewWillAppear(animated: Bool)
+	func actAccept(paytype:String)
+	func gotopayment()
+	func expandingTextView(expandingTextView: BHExpandingTextView!, didChangeHeight height: Float)
+	func sendButtonPressed(inputText: NSAttributedString!)
+	@IBAction func gotoProfile(sender: UIButton)
+	@IBAction func onAccept(sender: UIButton)
+	func dismissKeyboard()
+	func hideKeyboard(notification: AnyObject)
+	func keyboardWillShow(notification:NSNotification)
+	func keyboardWillHide(notification:NSNotification)
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+	func respondToTapAvatarGesture(gesture: UITapGestureRecognizer)
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableViewScrollToUp()
+	func tableViewScrollToBottom()
+	func tableViewScrollToBottom(animated: Bool)
+	func enteredMessage(message: String)
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!)
+NotificationManager.swift
+	class NotificationManager: NSObject
+	var deviceToken:NSString = ""
+	var userToken:NSString = ""
+	func setDeviceIOSToken(string:NSString)
+	func setUserOfNotifToken(string:NSString)
+	func http(request: NSURLRequest!, callback: (NSDictionary, String?) -> Void)
+PickerViewDataSourceDelegate.swift
+	protocol PickerViewDelegate:NSObjectProtocol
+	func updatedValue(object: AnyObject)
+	class PickerViewDataSourceDelegate: NSObject, UIPickerViewDelegate, UIPickerViewDataSource
+	var pickerDataSource = ["Requirements Not Met",
+	weak var delegate: PickerViewDelegate!
+	func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int
+	func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+	func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+	func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+AnswerPendingCell.swift
+	@IBOutlet weak var activity: UIActivityIndicatorView!
+	@IBOutlet weak var bidLabel: UILabel!
+	override func awakeFromNib()
+	override func setSelected(selected: Bool, animated: Bool)
+SkillsPickerViewController.swift
+	class SkillsPickerViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
+	var skillsPickerView: UIPickerView!
+	var selectedSubjectString: String!
+	let pickerData : NSMutableArray = [
+	override func viewDidLoad()
+	func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String
+	func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int
+	func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+	func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+NSDateExtension.swift
+	func yearsFrom(date:NSDate)   -> Int { return NSCalendar.currentCalendar().components(NSCalendarUnit.CalendarUnitYear, fromDate: date, toDate: self, options: nil).year }
+	func monthsFrom(date:NSDate)  -> Int { return NSCalendar.currentCalendar().components(NSCalendarUnit.CalendarUnitMonth, fromDate: date, toDate: self, options: nil).month }
+	func weeksFrom(date:NSDate)   -> Int { return NSCalendar.currentCalendar().components(NSCalendarUnit.CalendarUnitWeekOfYear, fromDate: date, toDate: self, options: nil).weekOfYear }
+	func daysFrom(date:NSDate)    -> Int { return NSCalendar.currentCalendar().components(NSCalendarUnit.CalendarUnitDay, fromDate: date, toDate: self, options: nil).day }
+	func hoursFrom(date:NSDate)   -> Int { return NSCalendar.currentCalendar().components(NSCalendarUnit.CalendarUnitHour, fromDate: date, toDate: self, options: nil).hour }
+	func minutesFrom(date:NSDate) -> Int { return NSCalendar.currentCalendar().components(NSCalendarUnit.CalendarUnitMinute, fromDate: date, toDate: self, options: nil).minute }
+	func secondsFrom(date:NSDate) -> Int { return NSCalendar.currentCalendar().components(NSCalendarUnit.CalendarUnitSecond, fromDate: date, toDate: self, options: nil).second }
+	var relativeTime: String
+	var stringDate: String
+SphereMenu.swift
+	protocol SphereMenuDelegate
+	func sphereDidSelected(index:Int)
+	class SphereMenu:UIView, UICollisionBehaviorDelegate
+	let kItemInitTag:Int = 1001
+	let kAngleOffset:CGFloat = CGFloat(M_PI_4 + (M_PI_4*3/4))
+	let kSphereLength:CGFloat = 80
+	let kSphereDamping:Float = 0.3
+	var delegate:SphereMenuDelegate?
+	var count:Int?
+	var start:UIImageView?
+	var images:Array<UIImage>?
+	var items:Array<UIImageView>?
+	var positions:Array<NSValue>?
+	var animator:UIDynamicAnimator?
+	var collision:UICollisionBehavior?
+	var itemBehavior:UIDynamicItemBehavior?
+	var snaps:Array<UISnapBehavior>?
+	var tapOnStart:UITapGestureRecognizer?
+	var bumper:UIDynamicItem?
+	var expanded:Bool?
+	var tapToDismiss = true
+	var dismissTap:UITapGestureRecognizer?
+	required init(startPoint:CGPoint, startImage:UIImage, submenuImages:Array<UIImage>, tapToDismiss:Bool)
+	required init(coder aDecoder: NSCoder)
+	required override init(frame: CGRect)
+	override func didMoveToSuperview()
+	func hide()
+	func commonSetup()
+	func centerForSphereAtIndex(index:Int) -> CGPoint
+	func startTapped(gesture:UITapGestureRecognizer)
+	func tapped(gesture:UITapGestureRecognizer)
+	func panned(gesture:UIPanGestureRecognizer)
+	func indexOfItemInArray(dataArray:Array<UIImageView>, item:AnyObject) -> Int
+	func shrinkSubmenu()
+	func expandSubmenu()
+	func snapToStartWithIndex(index:Int)
+	func snapToPostionsWithIndex(index:Int)
+	func removeSnapBehaviors()
+	func collisionBehavior(behavior: UICollisionBehavior, endedContactForItem item1: UIDynamicItem, withItem item2: UIDynamicItem)
+TutorQuestionDetailViewController.swift
+	class TutorQuestionDetailViewController: UIViewController, BHInputbarDelegate
+	@IBOutlet weak var lbTitle: UILabel!
+	@IBOutlet weak var ivOwnerAvatar: UIImageView!
+	@IBOutlet weak var lbOwnerName: UILabel!
+	@IBOutlet weak var lbTimestamp: UILabel!
+	@IBOutlet weak var wvDetail: UIWebView!
+	@IBOutlet weak var btnAnswer: UIButton!
+	@IBOutlet weak var messageView: UIView!
+	@IBOutlet weak var messageBox: BHInputbar!
+	var questionId:Int!
+	override func viewDidLoad()
+	func dismissKeyboard()
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+	override func didReceiveMemoryWarning()
+	@IBAction func onClickAnswer(sender: AnyObject)
+	func expandingTextView(expandingTextView: BHExpandingTextView!, didChangeHeight height: Float)
+Global.swift
+	var devToken:String!
+	var qdEntered:Bool!
+	var responseFromQuestion:String!
+	var notificationIsReceived:Bool!
+	var questionIDFromNotifications:String!
+	var ctSelectedIndex:Int! = 6
+	var stBudget:Int! = 1
+	var stTime:Int! = 1
+	var stTimeType:String! = "Hours"
+	var stPrivateQues:Bool! = false
+	var stUrgentQues:Bool! = false
+	var counter:Int!
+	var userInputQuestionTitle:String! = ""
+	var userInputQuestionDescription:String! = ""
+	var linkToReferral:String!
+ImageCollectionCell.swift
+	@IBOutlet weak var btnDeleteImgae: UIButton!
+	@IBOutlet weak var imvUpload: UIImageView!
+	override func awakeFromNib()
+MediumProgressViewManager.swift
+	public let MEDIUM_PROGRESS_COLOR = UIColor(red:0.33, green:0.83, blue:0.44, alpha:1)
+	public class MediumProgressViewManager
+	public enum Position
+	public var position: Position?
+	public var color: UIColor?
+	public var height: CGFloat?
+	public var isLeft: Bool             = true
+	public var duration: CFTimeInterval = 1.2
+	public var navigationheight : CGFloat?
+	public var progressView: MediumProgressView?
+	public init()
+	public func initialize()
+	public class var sharedInstance: MediumProgressViewManager
+	public func showProgressOnView(controller: UIViewController)
+	public func hideProgressView(controller: UIViewController)
+	func initializeProgressViewWithFrame(aFrame: CGRect) -> MediumProgressView
+MediumProgressView.swift
+	public class MediumProgressView: UIView
+	override public init(frame: CGRect)
+	convenience public init(frame: CGRect, isLeft: Bool, duration: CFTimeInterval)
+	required public init(coder aDecoder: NSCoder)
+	public func initialize(isLeft: Bool, duration: CFTimeInterval)
+	public func mediumProgressAnimation(isLeft: Bool, duration: CFTimeInterval) -> CAAnimation
+DLHamburguerViewController.swift
+	func toBarStyle() -> UIBarStyle
+	var gestureRecognizer: UIPanGestureRecognizer?
+	var gestureEnabled = true
+	var overlayAlpha: CGFloat = 0.3                                // % of dark fading of the background (0.0 - 1.0)
+	var animationDuration: NSTimeInterval = 0.35                    // duration of the menu animation.
+	var desiredMenuViewSize: CGSize?                                // if set, menu view size will try to adhere to these limits
+	var actualMenuViewSize: CGSize = CGSizeZero                     // Actual size of the menu view
+	var menuVisible = false                                         // Is the hamburguer menu currently visible?
+	var delegate: DLHamburguerViewControllerDelegate?
+	var menuDirection: DLHamburguerMenuPlacement = .Left
+	var menuBackgroundStyle: DLHamburguerMenuBackgroundStyle = .Dark
+	var containerViewController: DLHamburguerContainerViewController!
+	var contentViewController: UIViewController!
+	var menuViewController: UIViewController!
+	override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: NSBundle!)
+	required init(coder aDecoder: NSCoder)
+	init()
+	convenience init(contentViewController: UIViewController, menuViewController: UIViewController)
+	override func viewDidLoad()
+	override func didReceiveMemoryWarning()
+	override func childViewControllerForStatusBarStyle() -> UIViewController?
+	override func childViewControllerForStatusBarHidden() -> UIViewController?
+	internal func setupHamburguerViewController()
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool
+	func adjustMenuSize(forRotation: Bool = false)
+	func resizeMenuViewControllerToSize(size: CGSize)
+	func panGestureRecognized (recognizer: UIPanGestureRecognizer)
+	override func shouldAutorotate() -> Bool { return self.contentViewController.shouldAutorotate() }
+	override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval)
+	override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation)
+	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator)
+	func hamburguerDisplayController(controller: UIViewController, inFrame frame: CGRect)
+	func hamburguerHideController(controller: UIViewController)
+	func findHamburguerViewController() -> DLHamburguerViewController?
+	@objc protocol DLHamburguerViewControllerDelegate
+	optional func hamburguerViewController(hamburguerViewController: DLHamburguerViewController, didPerformPanGesture gestureRecognizer: UIPanGestureRecognizer)
+	optional func hamburguerViewController(hamburguerViewController: DLHamburguerViewController, willShowMenuViewController menuViewController: UIViewController)
+	optional func hamburguerViewController(hamburguerViewController: DLHamburguerViewController, didShowMenuViewController menuViewController: UIViewController)
+	optional func hamburguerViewController(hamburguerViewController: DLHamburguerViewController, willHideMenuViewController menuViewController: UIViewController)
+	optional func hamburguerViewController(hamburguerViewController: DLHamburguerViewController, didHideMenuViewController menuViewController: UIViewController)
+	optional func hamburguerViewController(hamburguerViewController: DLHamburguerViewController, willTransitionToSize size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator)
+	optional func hamburguerViewController(hamburguerViewController: DLHamburguerViewController, willAnimateRotationToInterfaceOrientation toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval)
+LTBounceSheet.swift
+	let duration = Double(0.1)
+	let sideViewDamping = CGFloat(0.87)
+	let sideViewVelocity = CGFloat(10)
+	let centerViewDamping = CGFloat(1.0)
+	let centerViewVelocity = CGFloat(8)
+	let footer = CGFloat(75)
+	protocol LTBounceSheetDelegate: NSObjectProtocol
+	func onSheetAnimationEnded()
+	class LTBounceSheet: UIView
+	init(height: CGFloat, bgColor: UIColor)
+	required init(coder aDecoder: NSCoder)
+	func respondToSwipeGesture(gesture: UISwipeGestureRecognizer)
+	func addView(view: UIView)
+	func toggle() { // programmatically show or hide view with animation
+	func show()
+	func hide()
+	func animateSideHelperViewToPoint(point: CGPoint)
+	func animateCenterHelperViewToPoint(point: CGPoint)
+	func animateContentViewToHeight(height: CGFloat)
+	func tick(displayLink: CADisplayLink)
+	func start()
+	func complete()
+	override func drawRect(rect: CGRect)
+	func setDelegate(delegate:LTBounceSheetDelegate)
+	func getFooter()->CGFloat
+SlideMenuController.swift
+	struct SlideMenuOptions
+	static var leftViewWidth: CGFloat = 270.0
+	static var leftBezelWidth: CGFloat = 16.0
+	static var contentViewScale: CGFloat = 0.96
+	static var contentViewOpacity: CGFloat = 0.5
+	static var shadowOpacity: CGFloat = 0.0
+	static var shadowRadius: CGFloat = 0.0
+	static var shadowOffset: CGSize = CGSizeMake(0,0)
+	static var panFromBezel: Bool = true
+	static var animationDuration: CGFloat = 0.4
+	static var rightViewWidth: CGFloat = 270.0
+	static var rightBezelWidth: CGFloat = 16.0
+	static var rightPanFromBezel: Bool = true
+	static var hideStatusBar: Bool = true
+	static var pointOfNoReturnWidth: CGFloat = 44.0
+	class SlideMenuController: UIViewController, UIGestureRecognizerDelegate
+	enum SlideAction
+	enum TrackAction
+	struct PanInfo
+	var action: SlideAction
+	var shouldBounce: Bool
+	var velocity: CGFloat
+	var opacityView = UIView()
+	var mainContainerView = UIView()
+	var leftContainerView = UIView()
+	var rightContainerView =  UIView()
+	var mainViewController: UIViewController?
+	var leftViewController: UIViewController?
+	var leftPanGesture: UIPanGestureRecognizer?
+	var leftTapGetsture: UITapGestureRecognizer?
+	var rightViewController: UIViewController?
+	var rightPanGesture: UIPanGestureRecognizer?
+	var rightTapGesture: UITapGestureRecognizer?
+	required init(coder aDecoder: NSCoder)
+	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?)
+	convenience init(mainViewController: UIViewController, leftMenuViewController: UIViewController)
+	convenience init(mainViewController: UIViewController, rightMenuViewController: UIViewController)
+	convenience init(mainViewController: UIViewController, leftMenuViewController: UIViewController, rightMenuViewController: UIViewController)
+	deinit { }
+	func initView()
+	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator)
+	override func viewDidLoad()
+	override func viewWillLayoutSubviews()
+	override func openLeft()
+	override func openRight()
+	override func closeLeft()
+	override func closeRight()
+	func addLeftGestures()
+	func addRightGestures()
+	func removeLeftGestures()
+	func removeRightGestures()
+	func isTagetViewController() -> Bool
+	func track(trackAction: TrackAction)
+	struct LeftPanState
+	static var frameAtStartOfPan: CGRect = CGRectZero
+	static var startPointOfPan: CGPoint = CGPointZero
+	static var wasOpenAtStartOfPan: Bool = false
+	static var wasHiddenAtStartOfPan: Bool = false
+	static var mainFrameAtStartOfPan: CGRect = CGRectZero
+	func handleLeftPanGesture(panGesture: UIPanGestureRecognizer)
+	struct RightPanState
+	static var frameAtStartOfPan: CGRect = CGRectZero
+	static var startPointOfPan: CGPoint = CGPointZero
+	static var wasOpenAtStartOfPan: Bool = false
+	static var wasHiddenAtStartOfPan: Bool = false
+	func handleRightPanGesture(panGesture: UIPanGestureRecognizer)
+	func openLeftWithVelocity(velocity: CGFloat)
+	func openRightWithVelocity(velocity: CGFloat)
+	func closeLeftWithVelocity(velocity: CGFloat)
+	func closeRightWithVelocity(velocity: CGFloat)
+	override func toggleLeft()
+	func isLeftOpen() -> Bool
+	func isLeftHidden() -> Bool
+	override func toggleRight()
+	func isRightOpen() -> Bool
+	func isRightHidden() -> Bool
+	func changeMainViewController(mainViewController: UIViewController,  close: Bool)
+	func changeLeftViewController(leftViewController: UIViewController, closeLeft:Bool)
+	func changeRightViewController(rightViewController: UIViewController, closeRight:Bool)
+	func closeLeftNonAnimation()
+	func closeRightNonAnimation()
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool
+	func slideMenuController() -> SlideMenuController?
+	func addLeftBarButtonWithImage(buttonImage: UIImage)
+	func addRightBarButtonWithImage(buttonImage: UIImage)
+	func toggleLeft()
+	func toggleRight()
+	func openLeft()
+	func openRight()
+	func closeLeft()
+	func closeRight()
+	func addPriorityToMenuGesuture(targetScrollView: UIScrollView)
+BidModel.swift
+	var university      : String
+	var major           : String
+	var rating          : String
+	var tier_name       : String
+	var tier_price      : String
+	var calc_price      : Float
+	var deliverin       : String
+	var est_time        : String
+	var timetype        : String
+	init(dic : NSDictionary)
+QuestionsViewController.swift
+	class QuestionsViewController: UIViewController, UIImagePickerControllerDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UITextViewDelegate, UITextFieldDelegate,UICollectionViewDataSource,UICollectionViewDelegate
+	@IBOutlet weak var descriptionview: UIView!
+	@IBOutlet weak var clvImageUpload: UICollectionView!
+	@IBOutlet weak var collectionImages: UICollectionView!
+	@IBOutlet weak var titleField: UITextField!
+	@IBOutlet weak var descField: SAMTextView!
+	@IBOutlet weak var textlength: UILabel!
+	@IBOutlet weak var stepimageview: UIImageView!
+	@IBOutlet weak var capturedImage: UIImageView!
+	@IBOutlet weak var takePhotoButton: UIButton!
+	@IBOutlet weak var progressHeaderHeight: NSLayoutConstraint!
+	@IBOutlet weak var topheight: NSLayoutConstraint?
+	@IBOutlet weak var tempImage: UIImageView!
+	@IBOutlet weak var btnNext: UIBarButtonItem!
+	var qTitle:String!
+	var qDesc:String!
+	var isImage:Bool!
+	var arrImages = [UIImage]()
+	var tapback : UITapGestureRecognizer!
+	let staticDescFieldText = "Stuck on an academic question? Get help now!"
+	override func viewWillAppear(animated: Bool)
+	override func viewDidAppear(animated: Bool)
+	override func viewWillDisappear(animated: Bool)
+	override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool
+	let overlayTransitioningDelegate = OverlayTransitioningDelegate()
+	func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool
+	func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+	var captureSession: AVCaptureSession?
+	var stillImageOutput: AVCaptureStillImageOutput!
+	var previewLayer: AVCaptureVideoPreviewLayer!
+	var cameraUI: UIImagePickerController = UIImagePickerController()
+	func appendString(string: String)
+DatePickerDialog.swift
+	class DatePickerDialog: UIView
+	override init(frame: CGRect)
+	required init(coder aDecoder: NSCoder)
+	func deviceOrientationDidChange(notification: NSNotification)
+	func show(#title: String, datePickerMode: UIDatePickerMode = .DateAndTime, callback: ((date: NSDate) -> Void))
+	func show(#title: String, doneButtonTitle: String, cancelButtonTitle: String, defaultDate: NSDate = NSDate(), datePickerMode: UIDatePickerMode = .DateAndTime, callback: ((date: NSDate) -> Void))
+	func buttonTapped(sender: UIButton!)
+	func countScreenSize() -> CGSize
+AnswerQuestionModel.swift
+	public class AnswerQuestionModel: NSObject
+	init(dic : NSDictionary)
+MenuCell.swift
+	class MenuCell: UITableViewCell
+	@IBOutlet weak var itemLabel: UILabel!
+	@IBOutlet weak var iconView: UIImageView!
+	@IBOutlet weak var badgeView: UILabel!
+PaymentPayViewController.swift
+	class PaymentPayViewController: UIViewController , PayPalPaymentDelegate, PayPalFuturePaymentDelegate
+	@IBOutlet weak var lbPrice: UILabel!
+	@IBOutlet weak var lbBalence: UILabel!
+	@IBOutlet weak var lbRemain: UILabel!
+	var isFromQuestion = false
+	var isFromFinalRelease = false
+	var isFromWithdraw = false
+	var paymentprice : Float!
+	var finalparameters : [String : AnyObject]!
+	var payPalConfig = PayPalConfiguration() // default
+	override func viewDidLoad()
+	override func viewWillAppear(animated: Bool)
+	override func didReceiveMemoryWarning()
+	@IBAction func onPaypal(sender:UIButton)
+	func payPalPaymentDidCancel(paymentViewController: PayPalPaymentViewController!)
+	func payPalPaymentViewController(paymentViewController: PayPalPaymentViewController!, didCompletePayment completedPayment: PayPalPayment!)
+	func payPalFuturePaymentDidCancel(futurePaymentViewController: PayPalFuturePaymentViewController!)
+	func payPalFuturePaymentViewController(futurePaymentViewController: PayPalFuturePaymentViewController!, didAuthorizeFuturePayment futurePaymentAuthorization: [NSObject : AnyObject]!)
+	func goWithdrawRelease()
+	func goFinalRelease()
+	func gobacktodetail()
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!)
+ImageLoader.swift
+	class ImageLoader
+	var cache = NSCache()
+	class var sharedLoader : ImageLoader
+	func imageFromAssets(fileName: String, imageview: UIImageView)
+	func imageForUrl(urlString: String, imageview :UIImageView, completionHandler:(image: UIImage?, url: String) -> ())
+HowItWorksViewController.swift
+	class HowItWorksViewController : UIViewController
+	@IBOutlet weak var topTextView: UITextView!
+	@IBOutlet weak var middleTextView: UITextView!
+	@IBOutlet weak var bottomTextView: UITextView!
+	@IBOutlet weak var titleView: UIView!
+	override func viewDidLoad()
+PromoCodeViewController.swift
+	class PromoCodeViewController: UIViewController
+	@IBOutlet weak var tfPromocode: UITextField!
+	override func viewDidLoad()
+	func dismissKeyboard()
+	override func didReceiveMemoryWarning()
+	@IBAction func onSubmit(sender:UIButton)
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+MyFooter.swift
+	class MyFooter : UIView
+	@IBOutlet var activityIndicator:UIActivityIndicatorView!
+	override var hidden:Bool
+	override func awakeFromNib()
+OverlayPresentationController.swift
+	class OverlayPresentationController: UIPresentationController
+	let dimmingView = UIView()
+	override init(presentedViewController: UIViewController!, presentingViewController: UIViewController!)
+	override func presentationTransitionWillBegin()
+	override func dismissalTransitionWillBegin()
+	override func frameOfPresentedViewInContainerView() -> CGRect
+	override func containerViewWillLayoutSubviews()
+WelcomeBackPopoverView.swift
+	protocol WelcomeBackPopoverViewDelegate
+	func onDismiss()
+	class WelcomeBackPopoverView: UIView
+	var delegate : WelcomeBackPopoverViewDelegate?
+	let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+	var originalPoint: CGPoint!
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+	func dragged(gestureRecognizer: UIPanGestureRecognizer) -> Void
+	func updateOverlay(distance: CGFloat)
+	@IBAction func onDismiss(sender: UIButton)
+	@IBAction func askQuestionButtonPressed(sender: UIButton)
+QuestionDetailViewController.swift
+	@IBOutlet weak var lbTitle: UILabel!
+	@IBOutlet weak var lbSubTitle: UILabel!
+	@IBOutlet weak var lbWithdrawn: UILabel!
+	@IBOutlet weak var mTableView: UITableView!
+	@IBOutlet weak var mTitleView: UIView!
+	@IBOutlet weak var mHowtoworks: UIView!
+	@IBOutlet weak var mCompletedFooter: UIView!
+	@IBOutlet weak var btnHowtoWorks: UIButton!
+	@IBOutlet weak var tutorsAreViewing: UIView!
+	@IBOutlet weak var btnCancel: UIButton!
+	@IBOutlet weak var contraintTopTitle: NSLayoutConstraint!
+	@IBOutlet weak var contraintTableBottom: NSLayoutConstraint!
+	@IBOutlet weak var contraintTableTop: NSLayoutConstraint!
+	@IBOutlet weak var contraintFooterBottom: NSLayoutConstraint!
+	@IBOutlet weak var contraintCompletedFooterBottom: NSLayoutConstraint!
+	@IBOutlet weak var discussBar: BHInputbar!
+	@IBOutlet weak var discussBarHeight: NSLayoutConstraint!
+	@IBOutlet weak var completedBarHeight: NSLayoutConstraint!
+	@IBOutlet weak var completeddiscussBar: BHInputbar!
+	var mFooterTutorAnswerController: TutorAnswerFooterController!
+	var cash: Double?
+	var payPal: Double?
+	var crediCard: Double?
+	var keyboardIsVisible :Bool = false
+	var heightImageView = NSMutableDictionary()
+	let IMAGE_URL:String = "http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg"
+	let customerServiceNames = ["Studypool"]
+	var showFooter = false
+	var questionattr : NSAttributedString!
+	var isConfirmTutor : Bool!
+	var isWithdrwan : Bool!
+	var questionCountdownTimer: NSTimer!
+	var keyboardsize : CGRect!
+	var temptablebottom: CGFloat!
+	var tempfooterbottom: CGFloat!
+	var tempfooterrect : CGRect!
+	var startLocation : CGPoint!
+	@IBOutlet weak var titleView : UIView!
+	@IBOutlet weak var withdrawnView : UIView!
+	@IBOutlet weak var acceptTutorView : UIView!
+	@IBOutlet weak var withdrawFooter : UIView!
+	@IBOutlet weak var bidBackgroundView: UIView!
+	var bFinalPayment: Bool = false
+	override func viewDidLoad()
+	func refreshquestion()
+	override func viewDidAppear(animated: Bool)
+	func panDetected(gesture: UIPanGestureRecognizer)
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool
+	func showTitleViews()
+	func openCompletedView(tutorName:String)
+	func getAnswerDetail(answerId:Int, userId:Int)
+	override func viewDidLayoutSubviews()
+	func countdownTimerFromDeadline()
+	func tableViewScrollToUp()
+	func tableViewScrollToBottom()
+	func tableViewScrollToBottom(animated: Bool)
+	func numberOfSectionsInTableView(tableView: UITableView) -> Int
+	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat{ //Sets the height for row
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func respondToTapAvatarGesture(gesture: UITapGestureRecognizer)
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) { // when user taps on table row this will be called
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+	func dismissKeyboard()
+	func keyboardDidShow(notification:NSNotification)
+	func keyboardWillShow(notification:NSNotification)
+	func keyboardWillHide(notification:NSNotification)
+	func showBidProfile(row: Int)
+	func selectBid(row: Int)
+	func closeBidView()
+	func openBidView()
+	func refreshDiscuss()
+	func onComment(message:String)
+	func onAccept()
+	func onPaymentRelease(tutorName: String)
+	func onDecline()
+	func onInfo()
+	func onDismiss()
+	func onGotoDetail(question: QuestionModel)
+	func changeFrameHeight(height: Float)
+	func expandingTextView(expandingTextView: BHExpandingTextView!, didChangeHeight height: Float)
+	func onSubmit(message:String)
+	func onAnswer()
+	func changeTutorFooterHeight(height:CGFloat)
+	func openPopoverView(tutorName:String)
+	@IBAction func submitAction(sender: AnyObject)
+	func actpayment(type: String, finalprice:Float)
+	func gotopayment(price: Float)
+	func showBidGuidPopupview()
+	func removeAllGesture(view :UIView!)
+	func sendButtonPressed(inputText: NSAttributedString!)
+	@IBAction func showHowToWorks(sender: AnyObject)
+	@IBAction func titleAction(sender: UIButton)
+	var html2AttributedString:NSAttributedString
+QuestionDetailWithImageCell.swift
+	class QuestionDetailWithImageCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource
+	@IBOutlet weak var ivAvatar: UIImageView!
+	@IBOutlet weak var ivMask: UIImageView!
+	@IBOutlet weak var lbName: UILabel!
+	@IBOutlet weak var lbCount: UILabel!
+	@IBOutlet weak var lbTimestamp: UILabel!
+	@IBOutlet weak var lbMainTimestamp: UILabel!
+	@IBOutlet weak var lblRating: UILabel!
+	@IBOutlet weak var lbDesc: UITextView!
+	@IBOutlet weak var imvCamera: UIImageView!
+	@IBOutlet weak var ivImage: UIImageView!
+	@IBOutlet weak var timestampContraint: NSLayoutConstraint!
+	@IBOutlet weak var timestampTopContraint: NSLayoutConstraint!
+	@IBOutlet weak var textviewRightContraint: NSLayoutConstraint!
+	@IBOutlet weak var constraintImageHeight: NSLayoutConstraint!
+	@IBOutlet weak var imageEmboss: UIImageView!
+	@IBOutlet weak var imageCollection: UICollectionView!
+	@IBOutlet weak var profileview: UIView!
+	@IBOutlet weak var borderView: UIView!
+	@IBOutlet weak var topMarginConstraint: NSLayoutConstraint?
+	@IBOutlet weak var bottomMarginConstraint: NSLayoutConstraint?
+	var nTotalCount : Int!
+	var nColumnCount : Int!
+	var viewcontroller : UIViewController!
+	var photoArray:NSArray!
+	var linkArray:NSArray!
+	override func awakeFromNib()
+	override func setSelected(selected: Bool, animated: Bool)
+	func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+	func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+	func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+	func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+SignupViewController.swift
+	class SignupViewController: UIViewController
+	let kFBURL          :String = "https://www.createpool.com/yiiauth/default/apiauth/provider/facebook/pin/sp86626728app#"
+	override func viewDidLoad()
+	@IBAction func seeTOS(sender: AnyObject)
+	var keyboardShown = false // Need to check whether keyboard is on the screen right now
+	var topPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var bottomPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var normalFrame: CGRect! // Saving View frame to restore it on keyboard hide
+	func keyboardWillShow(notification: NSNotification)
+	func keyboardWillHide(notification: NSNotification)
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+	@IBAction func existingUserAction(sender: UIButton)
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
+AnswerCell.swift
+	class AnswerCell: UITableViewCell
+BHDiscussBar.swift
+	protocol BHDiscussBarDelegate
+	func enteredMessage(message: String)
+	class BHDiscussBar: UIView,BHExpandingTextViewDelegate
+	var  delegate: BHDiscussBarDelegate?
+	var  inputButton: UIButton!
+	var  textView:BHExpandingTextView!
+	var inputButtonY:CGFloat! = 0
+	var isReturned:Bool! = false
+	var isEditing:Bool! = false
+	var isInit:Bool! = false
+	var viewFrame:CGRect!
+	var inputFrame:CGRect!
+	var buttonFrame:CGRect!
+	override func awakeFromNib()
+	override func layoutSubviews()
+	func setUpDiscussBar()
+	func inputButtonPressed()
+	func expandingTextViewDidChange(expandingTextView: BHExpandingTextView!)
+	func addDoneButtonToKeyboard( view: UIView)
+	func hideKeyboard(notification: AnyObject)
+	func expandingTextView(expandingTextView: BHExpandingTextView!, willChangeHeight height: Float)
+	func expandingTextViewShouldReturn(expandingTextView: BHExpandingTextView!) -> Bool
+NetworkUI.swift
+	let kIdentify              :String = "questions/apiidentify"
+	static let sharedInstance = NetworkUI()
+	func retrievePassword(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void)
+	func getReferralLink(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void)
+	func getIdentifyUser(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void)
+	func getBalance(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void)
+	func getDeadline(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void)
+	func postDeviceToken(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void)
+OverlayView.swift
+	protocol OverlayviewDelegate
+	func onDismiss()
+	func onAnswer()
+	class OverlayView: UIView
+	var parentview : FeedViewController!
+	var delegate : OverlayviewDelegate?
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+	@IBAction func onSubscribe(sender:UIButton)
+	@IBAction func onDismiss(sender:UIButton)
+	@IBAction func onAnswerQuestion(sender:UIButton)
+ConfirmPhoneNumberViewController.swift
+	var textCode: String = ""
+	override func viewDidLoad()
+	override func viewWillAppear(animated: Bool)
+	@IBAction func actBack(sender: UIButton)
+	override func didReceiveMemoryWarning()
+	func addAvataImage(nIndex : Int, strURL:String)
+	func enterFeed()
+DLHamburguerContainerViewController.swift
+	weak var hamburguerViewController: DLHamburguerViewController!      // root hamburguer view controller
+	var containerView: UIView!                                          // view containing the main content
+	var containerOrigin = CGPointZero                                   // origin of container view
+	var shouldAnimatePresentation = false                               // true if menu presentation should be animated.
+	var backgroundFadingView: UIView!                                   // background view that fades content when menu shows up
+	override func viewDidLoad()
+	override func didReceiveMemoryWarning()
+	override func viewWillAppear(animated: Bool)
+	func setContainerFrame(frame: CGRect)
+	func resizeToSize(size: CGSize)
+	func tapGestureRecognized(recognizer: UITapGestureRecognizer)
+	func panGestureRecognized(recognizer: UIPanGestureRecognizer)
+	func fixLayoutWithDuration(duration: NSTimeInterval)
+	override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval)
+	override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator)
+SwipableView.swift
+	class SwipableView: UIView
+	let swipableFrame = UIScreen.mainScreen().bounds
+	required init(coder aDecoder: NSCoder)
+BHInputbar.swift
+	@objc protocol BHInputbarDelegate:BHExpandingTextViewDelegate
+	optional func sendButtonPressed(inputText : NSAttributedString!)
+	optional func attachButtonPressed(inputText: NSAttributedString!)
+	class BHInputbar: UIView,BHExpandingTextViewDelegate
+	var textView: BHExpandingTextView!
+	var inputButton: UIButton!
+	var toggleButton: UIButton!
+	var inputDelegate: BHInputbarDelegate!
+	override func awakeFromNib()
+	func resizeToolbar()
+	func resizeTextView()
+	override func drawRect(rect: CGRect)
+	func setupToolbar()
+	func inputButtonPressed()
+	func expandingTextView(expandingTextView: BHExpandingTextView!, willChangeHeight height: Float)
+	func expandingTextViewDidChange(expandingTextView: BHExpandingTextView!)
+	func expandingTextViewShouldReturn(expandingTextView: BHExpandingTextView!) -> Bool
+	func expandingTextViewShouldBeginEditing(expandingTextView: BHExpandingTextView!) -> Bool
+	func expandingTextViewShouldEndEditing(expandingTextView: BHExpandingTextView!) -> Bool
+	func expandingTextViewDidBeginEditing(expandingTextView: BHExpandingTextView!)
+	func expandingTextViewDidEndEditing(expandingTextView: BHExpandingTextView!)
+	func expandingTextView(expandingTextView: BHExpandingTextView!, shouldChangeTextInRange range: NSRange, replacementText text: String!) -> Bool
+	func expandingTextView(expandingTextView: BHExpandingTextView!, didChangeHeight height: Float)
+	func expandingTextViewDidChangeSelection(expandingTextView: BHExpandingTextView!)
+LoginViewController.swift
+	class LoginViewController: UIViewController
+	let kClientId = "820657394781-m70uvh44pb0fee2donh6pk8i34a7eg22.apps.googleusercontent.com"
+	override func viewDidLoad()
+	override func viewWillAppear(animated: Bool)
+	override func viewDidAppear(animated: Bool)
+	override func viewDidDisappear(animated: Bool)
+	override func didReceiveMemoryWarning()
+	var keyboardShown = false // Need to check whether keyboard is on the screen right now
+	var normalFrame: CGRect! // Saving View frame to restore it on keyboard hide\\
+	var topPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var bottomPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+	func addNotificationsObservers()
+WelcomeUserPopoverView.swift
+	protocol WelcomeUserPopoverViewDelegate
+	func onDismiss()
+	class WelcomeUserPopoverView: UIView
+	var delegate : WelcomeUserPopoverViewDelegate?
+	var originalPoint: CGPoint!
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+	func dragged(gestureRecognizer: UIPanGestureRecognizer) -> Void
+	func updateOverlay(distance: CGFloat)
+	@IBAction func onDismiss(sender: UIButton)
+	@IBAction func awesomeButtonPressed(sender: UIButton)
+AcceptQuestionViewController.swift
+	protocol AcceptQuestionViewControllerDelegate
+	func onPaymentRelease(tutorName:String)
+	class AcceptQuestionViewController: UIViewController, UITextViewDelegate, JWStarRatingViewDelegate, UIGestureRecognizerDelegate, PaymentNotificationPopoverViewDelegate
+	var delegate : AcceptQuestionViewControllerDelegate?
+	var answerId:Int!
+	var questionTitle:String = ""
+	var questionTimestamp:Double = 0.0
+	var tutorName:String = ""
+	var tutorImageUrl:String = ""
+	var questionModel:QuestionModel!
+	var finalparameters: [String : AnyObject]!
+	var questionCountdownTimer: NSTimer!
+	@IBOutlet weak var lbTitle: UILabel!
+	@IBOutlet weak var lbDate: UILabel!
+	@IBOutlet weak var ivAvatar: UIImageView!
+	@IBOutlet weak var lbTutorName: UILabel!
+	var keyboardShown = false // Need to check whether keyboard is on the screen right now
+	@IBOutlet weak var confirmButton: UIButton!
+	@IBOutlet weak var toppopViewConstraint: NSLayoutConstraint! // Top Pop view constraint of the Pop view. Needs to be changed each time keyboard appears and disappears
+	@IBOutlet weak var bottompopViewConstraint: NSLayoutConstraint! // Bottom Pop view constraint of the Pop view. Needs to be changed each time keyboard appears and disappears
+	@IBOutlet weak var enterReasonTextView: UITextView! //The main text view, where user enters smth.
+	@IBOutlet weak var textViewBackView: UIImageView!
+	@IBOutlet weak var starRating: JWStarRatingView! // StarsRating
+	var starsRatingCount:Int! = 5 // This is where you can grab user entered stars
+	var isRated:Bool = false
+	override func viewDidLoad()
+	func dismissKeyboard()
+	func continueDeadlineTimer()
+	override func viewWillAppear(animated: Bool)
+	override func viewWillDisappear(animated: Bool)
+	override func viewDidDisappear(animated: Bool)
+	func setAllRounded()
+	func setViewRounded(viewToMakeRound :UIView)
+	func textViewDidBeginEditing(enterReasonTextView: UITextView)
+	func textViewDidEndEditing(enterReasonTextView: UITextView)
+	var topPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var bottomPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var normalFrame: CGRect! // Saving View frame to restore it on keyboard hide
+	func keyboardWillShow(notification: NSNotification)
+	func keyboardWillHide(notification: NSNotification)
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+	func onClickProfile(sender: AnyObject)
+	@IBAction func submitAction(sender: AnyObject)
+	func openPopoverView(tutorName:String)
+	func starsValueChanged(starsCount: Int)
+	func onDismiss()
+TutorApplicationFirstViewController.swift
+	class TutorApplicationFirstViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate
+	@IBOutlet var textField1: UITextField!
+	@IBOutlet var tutorInitialTextField: UITextField!
+	@IBOutlet var tutorExperienceTextView: UITextView!
+	@IBOutlet var charCountLabel: UILabel!
+	@IBOutlet var addSkillButton: UIButton!
+	@IBOutlet var removeSkillButton: UIButton!
+	@IBOutlet var nextButton: UIButton!
+	var hiddenPickerTextField: UITextField!
+	var toolbar: UIToolbar!
+	var selectedIndex: Int!
+	var tutorName: String?
+	var tutorID: String?
+	var skillKey: Int!
+	@IBOutlet var firstSkill: UIButton!
+	@IBOutlet var secondSkill: UIButton!
+	@IBOutlet var thirdSkill: UIButton!
+	@IBOutlet var fourthSkill: UIButton!
+	@IBOutlet var img1: UIImageView!
+	@IBOutlet var img2: UIImageView!
+	var pickerDataSource : NSMutableArray = [
+	var skillsPickerView: UIPickerView!
+	override func viewDidLoad()
+	var normalFrame: CGRect! // Saving View frame to restore it on keyboard hide\\
+	var topPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var bottomPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var keyboardShown = false // Need to check whether keyboard is on the screen right now
+	func keyboardWillShow(notification: NSNotification)
+	func keyboardWillHide(notification: NSNotification)
+	override func viewWillAppear(animated: Bool)
+	func enableOrDisenableNextButton()
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+	func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+	func createPickerView(sender:UIButton)
+	func addDoneButtonToSkillsPickerView()
+	func dismissSkillsPickerView()
+	func pickerView(pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString?
+	@IBAction func addSkillsButtonPressed(sender: UIButton)
+	@IBAction func removeSkillsButtonPressed(sender: UIButton)
+	func presentPickerViewController()
+	@IBAction func firstSkillButtonPressed(sender: UIButton)
+	@IBAction func secondSkillButtonPressed(sender: UIButton)
+	@IBAction func thirdSkillButtonPressed(sender: UIButton)
+	@IBAction func fourthSkillButtonPressed(sender: UIButton)
+	@IBAction func transitionToNextScene(sender: UIButton)
+	func addDoneButtonToKeyboard(textView: AnyObject)
+UIImageView+Cache.swift
+	func loadImage(url: NSURL, autoCache: Bool)
+AnimatedCustomSplashViewController.swift
+	class AnimatedCustomSplashViewController: UIViewController
+	@IBOutlet weak var imvBackground: UIImageView!
+	@IBOutlet weak var imvBlurView: UIImageView!
+	@IBOutlet weak var imvLogoView: UIImageView!
+	@IBOutlet weak var imvLogoText: UIImageView!
+	@IBOutlet weak var lbBelowFirst: UILabel!
+	@IBOutlet weak var lbBelowSecond: UILabel!
+	@IBOutlet weak var lbBelowThird: UILabel!
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLoad()
+	override func viewDidAppear(animated: Bool)
+	func showBlur()
+	func showLogo()
+	func showLogoText()
+	func showLoginPage()
+	func showBelowText1()
+	func showBelowText2()
+	func showBelowText3()
+QuestionModel.swift
+	public class QuestionModel: NSObject
+	var chargeForUrgent : Int
+	var numBids : Int
+	var lastToTalk: String
+	var showCategory: Int
+	var category: String
+	var resolutionRefunded: Int
+	var resolutionSolved: Int
+	init(dic : NSDictionary)
+PhoneVerficationViewController.swift
+	@IBOutlet weak var btnSendNumber: UIButton!
+	@IBOutlet weak var countryCode: UITextField!
+	override func viewDidLoad()
+	override func viewWillAppear(animated: Bool)
+	func dismissKeyboard()
+	@IBAction func actBack(sender: UIButton)
+	func updatedCountryValue(object: AnyObject)
+	override func didReceiveMemoryWarning()
+	@IBAction func countryCodeButtonPressed(sender: UIButton)
+RetrieveViewController.swift
+	class RetrieveViewController: UIViewController
+	@IBOutlet weak var sendpwButton: UIButton!
+	@IBOutlet weak var sendPwConst: NSLayoutConstraint!
+	@IBOutlet weak var tfEmail: UITextField!
+	@IBOutlet weak var mailIconConst: NSLayoutConstraint!
+	@IBOutlet weak var spLogo: UIImageView!
+	@IBOutlet weak var forgetYourPass: UILabel!
+	@IBOutlet weak var mailIcon: UIImageView!
+	@IBOutlet weak var seperator: UIImageView!
+	@IBOutlet weak var btLogin: UIButton!
+	@IBOutlet weak var backConst: NSLayoutConstraint!
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLoad()
+	func animateStudypoolLogo()
+	func animateForgetPass()
+	func animateFromLeftAllOtherFields()
+	override func didReceiveMemoryWarning()
+	@IBAction func backAction(sender: UIButton)
+	@IBAction func onSend(sender: AnyObject)
+SettingsViewController.swift
+	@IBOutlet weak var btnBack: UIBarButtonItem!
+	@IBOutlet weak var btnSubmit: UIBarButtonItem!
+	let blueColor = UIColor(netHex: 0x2ABFFF)
+	var segueHappened = false
+	func sliderTapped(sender:UITapGestureRecognizer)
+	override func viewDidLoad()
+	override func viewWillAppear(animated: Bool)
+	override func didReceiveMemoryWarning()
+	func makeRoundView(view:UIView)
+	var bottomPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var topPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var normalFrame: CGRect! // Saving View frame to restore it on keyboard hide
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
+	func dateformatterDate(date: NSDate) -> NSString
+	func textFieldDidChange(sender:UITextField)
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+	@IBAction func onSubmit(sender: AnyObject)
+	func changeButtonTapped(button : UIButton)
+	@IBAction func urgentQuestionClicked(sender: UIButton)
+	@IBAction func privateQuestionClicked(sender: UIButton)
+	@IBAction func backPressed(sender: AnyObject)
+	@IBAction func valChanged(sender: CustomSlider)
+	@IBAction func budgetPicked(sender: AnyObject)
+	@IBAction func typePicked(sender: UIButton)
+	@IBAction func valuePicked(sender: UIButton)
+	func sliderThumbCenter(slider: CustomSlider, forValue value:Float)-> CGFloat
+FeedViewController.swift
+	var test:NSDictionary!
+	var newthing = [NSDictionary]()
+	var searchModeOn = false
+	@IBOutlet weak var noQs: UIImageView!
+	@IBOutlet weak var lookDownToStart: UIImageView!
+	@IBOutlet weak var textForFin: UITextField!
+	var showedPop:Bool = false
+	let LOADMORE_HEIGHT:CGFloat = 60
+	var isOnLoadForSure = false
+	var backIsTouched = false
+	var x = 0
+	let blueColor = UIColor(netHex: 0x2ABFFF)
+	let greyColor = UIColor(netHex: 0xBBBBBB)
+	var isKeyboardShown = false
+	let pickerData : NSMutableArray = [
+	override func viewDidLoad()
+	override func viewWillDisappear(animated: Bool)
+	func onShowPopup(popuptype:Int, popupdetail:String)
+	func openWelcomePopup()
+	override func viewWillAppear(animated: Bool)
+	func backTapped()
+	func onDismiss()
+	func onAnswer()
+	@IBAction func viewQuestion(sender: UIButton)
+	@IBAction func unwindSegueToFeedVC(segue: UIStoryboardSegue)
+    {}
+	func openPopoverView(question:QuestionModel)
+	@IBAction func titleAction(sender: UIButton)
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+	func keyboardWillShow(notification: NSNotification)
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+	func scrollViewWillBeginDragging(scrollView: UIScrollView)
+ProfileTableViewCell.swift
+	class ProfileTableViewCell: UITableViewCell
+	@IBOutlet weak var reviewView: UITextView!
+	@IBOutlet weak var cellLabel1: UILabel!
+	@IBOutlet weak var cellImage: UIImageView!
+	@IBOutlet weak var startMark: UILabel!
+	@IBOutlet weak var timeLabel: UILabel!
+	@IBOutlet weak var maskImage: UIImageView!
+	override func awakeFromNib()
+SwiftBadge.swift
+	class SwiftBadge: UILabel
+	var defaultInsets = CGSize(width: 2, height: 2)
+	var actualInsets = CGSize()
+	required override init(frame: CGRect)
+	required init(coder aDecoder: NSCoder)
+	override func textRectForBounds(bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect
+	override func drawTextInRect(rect: CGRect)
+UIViewControllerExtension.swift
+	var g_hamburgerNotificationsCountLabel: UILabel? = nil
+	func setNavigationBarItem()
+	func removeNavigationBarItem()
+	func loadJSONNumber(uri: String, callback: (Int) -> Void)
+TermsViewController.swift
+	@IBOutlet weak var textView: UITextView!
+	override func viewDidLoad()
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLayoutSubviews()
+	override func didReceiveMemoryWarning()
+	@IBAction func onBack(sender: AnyObject)
+MyAnswerViewController.swift
+	class MyAnswerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate
+	@IBOutlet weak var tableViewFooter: MyFooter!
+	var test:NSDictionary!
+	var newthing = [NSDictionary]()
+	var nPage:Int!
+	var currentTaskId:Int!
+	let LOADMORE_HEIGHT:CGFloat = 60
+	let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+	var lastCounts:Int!
+	var postCount:Int!
+	@IBOutlet weak var tableView: UITableView!
+	@IBOutlet weak var headerbar: UIView!
+	@IBOutlet weak var topMarginConstraint: NSLayoutConstraint?
+	@IBOutlet weak var bottomMarginConstraint: NSLayoutConstraint?
+	var dataArray :[AnswerModel] = [AnswerModel]()
+	var questionArray:[AnswerModel] = [AnswerModel]()
+	var keyboardSize : CGRect!
+	override func viewDidLoad()
+	@IBAction func goToProfile(sender:UIButton)
+	func keyboardWillShow(notification: NSNotification)
+	func keyboardWillHide(notification: NSNotification)
+	override func viewWillDisappear(animated: Bool)
+	override func viewWillAppear(animated: Bool)
+	lazy var refreshControl: UIRefreshControl =
+	func handleRefresh(refreshControl: UIRefreshControl)
+	func scrollViewWillBeginDragging(scrollView: UIScrollView)
+	func scrollViewDidScroll(scrollView: UIScrollView)
+	func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool)
+	func loadMore()
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+	@IBAction func menuButtonTouched(sender: AnyObject)
+	func getMyProfile()
+	func getMyAnswers()
+	func httpParseArr(request: NSURLRequest!, callback: ([NSDictionary], String?) -> Void)
+	func enterQuestion()
+	func enterQuestionDetail(question:QuestionModel)
+	@IBAction func postQuestion(sender: UIButton)
+	@IBAction func viewQuestion(sender: UIButton)
+	@IBAction func unwindSegueToFeedVC(segue: UIStoryboardSegue)
+    {}
+	@IBOutlet weak var tfSearch: UITextField!
+	@IBOutlet weak var btnSearch: UIButton!
+	@IBOutlet weak var btnClose: UIButton!
+	@IBOutlet weak var searchView: UIVisualEffectView!
+	func showSearchBar()
+	func hideSearchBar()
+	@IBAction func searchKeyChanged(sender: UITextField)
+	func dataArrayWithFilter(filterkey:String, originArray:NSArray)->NSArray
+	@IBAction func onSearch(sender: AnyObject)
+	@IBAction func onClose(sender: AnyObject)
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+SubjectCell.swift
+	class SubjectCell: UITableViewCell
+	@IBOutlet weak var lblTitle: UILabel!
+	@IBOutlet weak var imgCheck: UIImageView!
+	override func awakeFromNib()
+	override func setSelected(selected: Bool, animated: Bool)
+UIImageEffects.swift
+	public func applyLightEffect() -> UIImage?
+	public func applyExtraLightEffect() -> UIImage?
+	public func applyDarkEffect() -> UIImage?
+	public func applyTintEffectWithColor(tintColor: UIColor) -> UIImage?
+	public func applyBlurWithRadius(blurRadius: CGFloat, tintColor: UIColor?, saturationDeltaFactor: CGFloat, maskImage: UIImage? = nil) -> UIImage?
+DeclineQuestionViewController.swift
+	class DeclineQuestionViewController: UIViewController, UITextViewDelegate, PickerViewDelegate, JWStarRatingViewDelegate, UIGestureRecognizerDelegate
+	var questionId:Int!
+	var questionTitle:String = ""
+	var questionTimestamp:Double = 0.0
+	var tutorName:String = ""
+	var tutorImageUrl:String = ""
+	var questionModel:QuestionModel!
+	@IBOutlet weak var lbTitle: UILabel!
+	@IBOutlet weak var lbDate: UILabel!
+	@IBOutlet weak var ivAvatar: UIImageView!
+	@IBOutlet weak var lbTutorName: UILabel!
+	let pickerView = UIPickerView(frame: CGRect(x: 0, y: 0, width: 0, height: 0)) // Init UIPicker
+	var keyboardShown = false // Need to check whether keyboard is on the screen right now
+	@IBOutlet weak var showReasonPicker: UIButton! // Button to show the UIPicker and which title we set when using UIPicker
+	@IBOutlet weak var confirmButton: UIButton!
+	@IBOutlet weak var toppopViewConstraint: NSLayoutConstraint! // Top Pop view constraint of the Pop view. Needs to be changed each time keyboard appears and disappears
+	@IBOutlet weak var bottompopViewConstraint: NSLayoutConstraint! // Bottom Pop view constraint of the Pop view. Needs to be changed each time keyboard appears and disappears
+	@IBOutlet weak var starRating: JWStarRatingView! // StarsRating
+	var pickerViewDataDelegate = PickerViewDataSourceDelegate() // UIPicker DataSource and Delegate. There you set data for UIPicker. Also has the Delegate method "Updated Value"
+	var panGestureRecognizer: UIPanGestureRecognizer! // Gesture recognizer for swipes
+	var blurView: UIVisualEffectView! // View with blur effect, that lays under Pop view
+	@IBOutlet weak var enterReasonTextView: UITextView! //The main text view, where user enters smth.
+	var starsRatingCount:Int!  // This is where you can grab user entered stars
+	var pickerResult:AnyObject! // This is where you can grab what user selected within the picker
+	override func viewDidLoad()
+	override func viewWillAppear(animated: Bool)
+	override func viewWillDisappear(animated: Bool)
+	func starsValueChanged(starsCount: Int)
+	func setAllRounded()
+	func setViewRounded(viewToMakeRound :UIView)
+	var bottomPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var topPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var normalFrame: CGRect! // Saving View frame to restore it on keyboard hide
+	func keyboardWillShow(notification: NSNotification)
+	func keyboardWillHide(notification: NSNotification)
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+	override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
+	func dismissKeyboard()
+	func textViewDidBeginEditing(enterReasonTextView: UITextView)
+	func textViewDidEndEditing(enterReasonTextView: UITextView)
+AppDelegate.swift
+	class AppDelegate: UIResponder, UIApplicationDelegate, WelcomeBackPopoverViewDelegate, ReferralBonusPopoverViewDelegate
+	var window: UIWindow?
+	var bFirstSign:Bool = false
+	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool
+	func onDismiss()
+	func applicationWillResignActive(application: UIApplication)
+	func applicationDidEnterBackground(application: UIApplication)
+	func applicationWillEnterForeground(application: UIApplication)
+	func applicationDidBecomeActive(application: UIApplication)
+	func applicationWillTerminate(application: UIApplication)
+	lazy var applicationDocumentsDirectory: NSURL =
+	lazy var managedObjectModel: NSManagedObjectModel =
+	lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? =
+	lazy var managedObjectContext: NSManagedObjectContext? =
+	func saveContext ()
+ProfileViewController.swift
+	class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
+	@IBOutlet weak var tableView: UITableView!
+	@IBOutlet weak var labelsCollectionView: UICollectionView!
+	@IBOutlet weak var questionsCountLabel: UILabel!
+	@IBOutlet weak var answersCountLabel: UILabel!
+	@IBOutlet weak var userNameLabel: UILabel!
+	@IBOutlet weak var profileImageView: UIImageView!
+	@IBOutlet weak var profileBackgroundImageView: UIImageView!
+	@IBOutlet weak var profileRatingLabel: UILabel!
+	@IBOutlet weak var noReviewsView: UIView!
+	@IBOutlet weak var noReviewImage: UIImageView!
+	@IBOutlet weak var noReviewLabel: UILabel!
+	var selectedUserID: String!
+	var nextReviewsPage: Int = 0
+	var reviews: Array<Dictionary<String,String>> = Array<Dictionary<String,String>>()
+	var swiped = 1
+	var labelArray:NSMutableArray!
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLoad()
+	func updateProfileLabels(recommended: Boolean)
+	override func viewWillDisappear(animated: Bool)
+	func loadProfile(tutor: Boolean)
+	func loadProfilePicture()
+	func loadReviews(page: Int = 1)
+	func downloadImageAsynchronously(imageView: UIImageView, uri: String)
+	func numberOfSectionsInTableView(tableView: UITableView) -> Int
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+	func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+	func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
+	func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOfGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool
+	func swipedDown(sender:UISwipeGestureRecognizer)
+	func swipedUp(sender:UISwipeGestureRecognizer)
+	@IBAction func answerQuestions(sender: UIButton)
+WithdrawPendingViewcontroller.swift
+	@IBOutlet weak var titleView: UIView!
+	@IBOutlet weak var messageView: UIView!
+	@IBOutlet weak var buttonView: UIView!
+	@IBOutlet weak var tablview: UITableView!
+	@IBOutlet weak var discussBar: BHDiscussBar!
+	@IBOutlet weak var button: UIButton!
+	@IBOutlet weak var textviewMarginConstraint: NSLayoutConstraint?
+	var dataArray :[DiscussionModel] = [DiscussionModel]()
+	var keyboardSize : CGRect!
+	var questionModel: QuestionModel!
+	var answerId : String!
+	var heightWebView = NSMutableDictionary()
+	var mWebView:UIWebView?
+	var heightImageView = NSMutableDictionary()
+	var fromDeclinePage : Bool!
+	var mTextView:UITextView?
+	var attributStrings = NSMutableArray()
+	var studentName : String?
+	var tutorID : String?
+	override func viewDidLoad()
+	func dismissKeyboard()
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+	override func didReceiveMemoryWarning()
+	override func viewWillAppear(animated: Bool)
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+	func onComment(message:String)
+	@IBAction func submitAction(sender: AnyObject)
+	func gotopayment(price: Float)
+	func actpayment(type: String, finalprice:Float)
+	func enteredMessage(message: String)
+	func keyboardWillShow(notification:NSNotification)
+	func keyboardWillHide(notification:NSNotification)
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+	func respondToTapAvatarGesture(gesture: UITapGestureRecognizer)
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableViewScrollToUp()
+	func tableViewScrollToBottom()
+JWStarRatingView.swift
+	protocol JWStarRatingViewDelegate: NSObjectProtocol
+	func starsValueChanged(starsCount: Int)
+	@IBDesignable public class JWStarRatingView: UIView
+	@IBInspectable var starColor: UIColor = UIColor(red: 200.0/255.0, green: 200.0/255.0, blue: 200.0/255.0, alpha: 1)
+	@IBInspectable var starHighlightColor: UIColor = UIColor(red: 255.0/255.0, green: 255.0/255.0, blue: 0/255.0, alpha: 1)
+	@IBInspectable var starCount:Int = 5
+	@IBInspectable var spaceBetweenStar:CGFloat = 5.0
+	weak var delegate: JWStarRatingViewDelegate!
+	override public func awakeFromNib()
+	override init(frame: CGRect)
+	required public init(coder aDecoder: NSCoder)
+	func valueChanged(starRating:JWStarRating)
+ChooseAvatarView.swift
+	class ChooseAvatarView: UIView
+	class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView?
+PromotionViewController.swift
+	class PromotionViewController: UIViewController, ReferralBonusPopoverViewDelegate
+	@IBOutlet weak var tfPromocode: UITextField!
+	@IBOutlet weak var shareButton: UIButton!
+	@IBOutlet weak var view1: UIView!
+	@IBOutlet weak var view2: UIView!
+	@IBOutlet weak var view3: UIView!
+	@IBOutlet weak var view4: UIView!
+	@IBOutlet weak var imag: UIImageView!
+	@IBOutlet weak var banner: UIImageView!
+	@IBOutlet weak var ufo: UIImageView!
+	@IBOutlet weak var topMarginConstraint: NSLayoutConstraint?
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLoad()
+	func onDismiss()
+	func dismissKeyboard()
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+	func animateUFO()
+	func animate()
+	func setAnchorPoint(anchor: CGPoint, forview: UIView)
+	@IBAction func onSubmit(sender: UIButton)
+	override func didReceiveMemoryWarning()
+	func rotate360Degrees(duration: CFTimeInterval = 1.0, completionDelegate: AnyObject? = nil)
+TutorApplicationThirdViewController.swift
+	var g_TutorApplicationThirdViewController_firstName: String? = nil
+	var g_TutorApplicationThirdViewController_lastName: String? = nil
+	var g_TutorApplicationThirdViewController_description: String? = nil
+	var g_TutorApplicationThirdViewController_skills: Array<String>? = nil
+	class TutorApplicationThirdViewController: UIViewController
+	@IBOutlet weak var resultLabel: UILabel!
+	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+	override func viewWillAppear(animated: Bool)
+TutorApplicationSecondViewController.swift
+	class TutorApplicationSecondViewController: UIViewController
+	@IBOutlet var checkBox1: UIButton!
+	@IBOutlet var checkBox2: UIButton!
+	@IBOutlet var proceedButton: UIButton!
+	var firstChecked = false
+	var secondChecked = false
+	var tutorName: String!
+	var tutorID: String!
+	@IBAction func firstCheckBoxPressed(sender: UIButton)
+	@IBAction func secondCheckBoxPressed(sender: UIButton)
+	override func viewDidLoad()
+	@IBAction func proceedButtonPressed(sender: UIButton)
+OverlayTransitioningDelegate.swift
+	class OverlayTransitioningDelegate : NSObject, UIViewControllerTransitioningDelegate
+	func presentationControllerForPresentedViewController(presented: UIViewController,
+                        presentingViewController presenting: UIViewController,
+                        sourceViewController source: UIViewController) -> UIPresentationController?
+	func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController)-> UIViewControllerAnimatedTransitioning?
+SocialLoginViewController.swift
+	class SocialLoginViewController: UIViewController, UIWebViewDelegate
+	var black: Bool!
+	override func viewWillAppear(animated: Bool)
+	override func viewDidLoad()
+	override func viewDidAppear(animated: Bool)
+	override func didReceiveMemoryWarning()
+	@IBOutlet weak var webview: UIWebView!
+	var socialURL : String!
+	var socialType : String!
+	var parentview : LoginViewController!
+	var signupview : SignupViewController!
+	func loadwebview()
+PaymentAddViewController.swift
+	protocol PaymentDelegate
+	func postQuestion(params: [String: AnyObject], image: UIImage, success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void)
+	class PaymentAddViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate,CardIOPaymentViewControllerDelegate
+	var delegate: PaymentDelegate?
+	@IBOutlet weak var cardNumberButton: UIButton!
+	@IBOutlet weak var cardCodeButton: UIButton!
+	@IBOutlet weak var yearButton: UIButton!
+	@IBOutlet weak var monthButton: UIButton!
+	@IBOutlet weak var tfCardNumber: UITextField!
+	@IBOutlet weak var tfCVC: UITextField!
+	@IBOutlet weak var tvHiddenField: UITextField!
+	@IBOutlet weak var lbPrice: UILabel!
+	var isFromQuestion = false
+	var isFromFinalRelease = false
+	var isFromWithdraw = false
+	var questionsViewController: UIViewController!
+	let kBaseURL            :String = "https://www.studypool.com/"
+	let stripePublishableKey = "pk_live_b1FmcVa6jcVXEm5ohHnsXHr5"
+	let kSubmitPaypal          :String = "questions/apipaypaltokenstan"
+	let kSubmitStripe          :String = "questions/apistripetokenstan"
+	let kCheckToken            :String = "questions/apichecktokenstan"
+	let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+	var currentPickupView:UIButton!
+	var keyboardShown = false // Need to check whether keyboard is on the screen right now
+	let pickerView = UIPickerView(frame: CGRect(x: 0, y: 0, width: 0, height: 0)) // Init UIPicker
+	@IBOutlet weak var topPopContraint: NSLayoutConstraint!
+	override func viewDidLoad()
+	func dismissKeyboard()
+	override func viewWillAppear(animated: Bool)
+	override func viewDidAppear(animated: Bool)
+	override func viewDidDisappear(animated: Bool)
+	func makeRoundView(view:UIView)
+	override func didReceiveMemoryWarning()
+	@IBAction func scanCard(sender: AnyObject)
+	func userDidCancelPaymentViewController(paymentViewController: CardIOPaymentViewController!)
+	func userDidProvideCreditCardInfo(cardInfo: CardIOCreditCardInfo!, inPaymentViewController paymentViewController: CardIOPaymentViewController!)
+	func instantiatePickerTextField()
+	var topPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var bottomPopViewConstant: CGFloat! // Saving constants to restore the view when keyboard hides
+	var normalFrame: CGRect! // Saving View frame to restore it on keyboard hide
+	func keyboardWillShow(notification: NSNotification)
+	func keyboardWillHide(notification: NSNotification)
+	let monthDataSource = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+	let yearDataSource = ["2012", "2013", "2014", "2015", "2016", "2017","2018","2019","2020","2021","2022","2023","2024","2025","2026","2027","2028","2029","2030"]
+	func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int
+	@IBAction func onSelectMonth(sender: AnyObject)
+	@IBAction func onSelectYear(sender: AnyObject)
+	func http(request: NSURLRequest!, callback: (NSDictionary, String?) -> Void)
+	@IBAction func onAddCard(sender: AnyObject)
+	func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+	func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+	func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+	func goWithdrawRelease()
+	func goFinalRelease()
+	func gobacktodetail()
+DLSlideMenuViewController.swift
+	enum NavigationIndex: Int
+	var howItWorksController: UIViewController!
+	var tutorApplicationFirstViewController: UIViewController!
+	var picker: MFMailComposeViewController!
+	override func viewDidLoad()
+	override func viewDidAppear(animated: Bool)
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+	func onDismiss()
+	func onAnswer()
+	func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!)
+	func showSendMailErrorAlert()
+QuestionDetailAnsweredFooterController.swift
+	protocol QuestionDetailAnsweredFooterControllerDelegate:BHExpandingTextViewDelegate
+	func onComment(message:String)
+	func onDecline()
+	func onInfo()
+	func onAccept()
+	func changeFrameHeight(height:Float)
+	class QuestionDetailAnsweredFooterController: UIViewController, UITextFieldDelegate, BHInputbarDelegate
+	@IBOutlet weak var heightBox: NSLayoutConstraint!
+	@IBOutlet weak var widthBox: NSLayoutConstraint!
+	@IBOutlet weak var btnComment: UIButton!
+	@IBOutlet weak var btnDecline: UIButton!
+	@IBOutlet weak var btnInfo: UIButton!
+	@IBOutlet weak var btnAccept: UIButton!
+	@IBOutlet weak var viewDecline: UIView!
+	@IBOutlet weak var viewInfo: UIView!
+	@IBOutlet weak var viewAccept: UIView!
+	@IBOutlet weak var containerView: UIView!
+	@IBOutlet weak var leftButtonWidth: NSLayoutConstraint!
+	@IBOutlet weak var centerButtonWidth: NSLayoutConstraint!
+	@IBOutlet weak var rightButtonWidth: NSLayoutConstraint!
+	@IBOutlet weak var rightWidth: NSLayoutConstraint!
+	@IBOutlet weak var centerWidth: NSLayoutConstraint!
+	@IBOutlet weak var leftWidth: NSLayoutConstraint!
+	@IBOutlet weak var rightToCenter: NSLayoutConstraint!
+	@IBOutlet weak var leftToCenter: NSLayoutConstraint!
+	@IBOutlet weak var footerView: UIView!
+	@IBOutlet weak var middeToTop: NSLayoutConstraint!
+	@IBOutlet weak var messageBox: BHInputbar!
+	@IBOutlet weak var constraintHeight: NSLayoutConstraint!
+	var delegate:QuestionDetailAnsweredFooterControllerDelegate?
+	var overdue: Bool = false
+	override func viewDidLoad()
+	func dismissKeyboard()
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	func hideKeyboard(notification: AnyObject)
+	override func didReceiveMemoryWarning()
+	func textFieldShouldReturn(textField: UITextField) -> Bool
+	func clearComment()
+	func expandingTextView(expandingTextView: BHExpandingTextView!, didChangeHeight height: Float)
+	func sendButtonPressed(inputText: NSAttributedString!)
+	func attachButtonPressed(inputText: NSAttributedString!)
+	@IBAction func onClickComment(sender: AnyObject)
+	@IBAction func onClickDecline(sender: AnyObject)
+	@IBAction func onClickInfo(sender: AnyObject)
+	@IBAction func onClickAccept(sender: AnyObject)
+DLHamburguerNavigationController.swift
+	class DLHamburguerNavigationController: UINavigationController, UIGestureRecognizerDelegate
+	override func viewDidLoad()
+	override func didReceiveMemoryWarning()
+	func panGestureRecognized(sender: UIPanGestureRecognizer!)
+	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool

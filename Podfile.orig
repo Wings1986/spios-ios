@@ -1,0 +1,16 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+link_with 'spios', 'spios Tests'
+
+use_frameworks!
+
+pod 'Alamofire', '~> 1.2'
+pod 'MBProgressHUD', '~> 0.9.1'
+pod 'HanekeSwift'
+pod 'AsyncImageView'
+pod 'FRDLivelyButton', '~> 1.1.3'
+<<<<<<< HEAD
+pod 'ActionSheetPicker-3.0'
+=======
+>>>>>>> 5521c3ccff7cdccdc5fd4f37d7583d2b922779e3
+pod 'Analytics/Segmentio'

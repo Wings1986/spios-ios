@@ -1,0 +1,617 @@
+//
+//  ConfirmTutorViewController.swift
+//  spios
+//
+//  Created by MobileGenius on 6/29/15.
+//  Copyright (c) 2015 Studypool. All rights reserved.
+//
+
+import UIKit
+
+class ConfirmTutorViewController: UIViewController,UITableViewDataSource,UITableViewDelegate, BHInputbarDelegate {
+    
+    @IBOutlet weak var titleView: UIView!
+    @IBOutlet weak var messageView: UIView!
+    @IBOutlet weak var buttonView: UIView!
+    @IBOutlet weak var tablview: UITableView!
+    @IBOutlet weak var discussBar: BHInputbar!
+    
+    @IBOutlet weak var lbUniversity: UILabel!
+    @IBOutlet weak var lbMajor: UILabel!
+    @IBOutlet weak var lbRating: UILabel!
+    @IBOutlet weak var lblRating: UILabel!
+    
+    @IBOutlet weak var lbName: UILabel!
+    @IBOutlet weak var lbPrice: UILabel!
+    @IBOutlet weak var lbHours: UILabel!
+    @IBOutlet weak var lbTime: UILabel!
+    @IBOutlet weak var avatar: UIImageView!
+    
+    @IBOutlet weak var discussBarHeight: NSLayoutConstraint!
+    
+	var IsPaymentClicked:Bool = false
+    @IBOutlet weak var textviewMarginConstraint: NSLayoutConstraint?
+    
+    var tutorID : String?
+    
+    var dataArray :[DiscussionModel] = [DiscussionModel]()
+    
+    var keyboardSize : CGRect!
+    
+    var studentAvatar: UIImage!
+
+    var heightWebView = NSMutableDictionary()
+    var mWebView:UIWebView?
+    var heightImageView = NSMutableDictionary()
+    
+     var mTextView:UITextView?
+    
+    
+    var studentName : String?
+    var studentImageUrl : String?
+    var tutorImageUrl : String?
+    var tutorModel : BidModel?
+    var questionModel : QuestionModel?
+    
+    var attributStrings = NSMutableArray()
+    
+    //for testing, directly go to the segue
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        println(titleView)
+		println(mTextView)
+        titleView.layer.shadowOpacity = 0.3
+        titleView.layer.shadowColor = UIColor.blackColor().CGColor
+        titleView.layer.shadowOffset = CGSizeMake(0.0,2.0)
+        titleView.layer.masksToBounds = false
+        titleView.layer.shadowRadius = 1.5
+        
+        mTextView = UITextView(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.width-18, 30))
+        
+        var strRating  = NSString(format: "%@", self.tutorModel!.rating)
+        var rating = strRating.floatValue as Float
+        lblRating.text = String(format: "%.01f", rating)
+        
+//        self.discussBar.delegate = self
+        
+        
+        discussBar?.inputDelegate = self; // making this class delegate to know what actions are happening with toolbar
+        discussBar?.textView.placeholder = "Comment";
+        discussBar?.textView.layer.cornerRadius = 5
+        discussBar?.textView.maximumNumberOfLines = 5 // limits the size of input view
+        
+        
+        discussBar?.layer.shadowOpacity = 0.3
+        discussBar?.layer.cornerRadius = 3
+        discussBar?.layer.shadowColor = UIColor.blackColor().CGColor
+        discussBar?.layer.shadowOffset = CGSizeMake(0.0,2.0)
+        discussBar?.layer.masksToBounds = false
+        discussBar?.layer.shadowRadius = 1.5
+
+        
+        
+        self.automaticallyAdjustsScrollViewInsets = false
+        
+        
+        var swipe:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target:self, action:"dismissKeyboard")
+        
+        swipe.direction = UISwipeGestureRecognizerDirection.Down
+        
+        self.view.addGestureRecognizer(swipe)
+		//addDoneButtonToKeyboard(self.discussBar.textView.internalTextView)
+    }
+    func dismissKeyboard(){
+        self.discussBar.textView.internalTextView.resignFirstResponder()
+      
+    }
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	{
+		var toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 44))
+		var leftSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+		var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target:self, action: Selector("hideKeyboard:"))
+		toolbar.setItems([leftSpace, doneButton], animated: false)
+		if textView.isKindOfClass(UITextField)
+		{
+			(textView as! UITextField).inputAccessoryView = toolbar
+			return
+		}
+		(textView as! UITextView).inputAccessoryView = toolbar
+	}
+	func hideKeyboard(notification: AnyObject)
+	{
+		
+		if mTextView!.isFirstResponder(){
+			mTextView!.resignFirstResponder()
+			return
+		}
+	}
+	
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        var date = NSDate(timeIntervalSince1970:tutorModel!.created_time as Double)
+//		self.discussBar.addDoneButtonToKeyboard(self.view)
+//
+		
+        ImageLoader.sharedLoader.imageForUrl(tutorModel!.avatar, imageview: avatar, completionHandler:{(image: UIImage?, url: String) in
+           
+        })
+        
+        lbPrice.text = String(format: "$%@", String((tutorModel!.price as NSString).integerValue))
+        lbName.text = tutorModel!.tutorname
+        lbHours.text = String(format: "within %@", tutorModel!.deadline)
+        lbRating.text = String(format: "Standard($%@/h)", tutorModel!.rating)
+        lbUniversity.text = tutorModel!.university
+        lbMajor.text = tutorModel!.major
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector :"keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+        
+        let parameters = [
+            "token": token,
+            "answer_id":tutorModel?.answer_id
+        ]
+        
+        NetworkUI.sharedInstance.getDiscussions(parameters,
+            success: { (response) -> Void in
+                
+                self.dataArray.removeAll(keepCapacity: true)
+                
+                let arrayJSON = response as! NSArray
+                for dic in arrayJSON{
+                    var model = DiscussionModel(dic: dic as! NSDictionary)
+                    self.dataArray.append(model)
+                    //                TAOverlay.hideOverlay()
+                    
+//                    var str = dic["withtags"] as? String
+                    var str = String(format: "%@<br><br>", (dic["withtags"] as? String)!)
+                    
+
+                    //wrap the html with font and color
+
+<<<<<<< HEAD
+                    var attrString = DDHTMLAttribute.attributedStringFromHTML(str, normalFont: UIFont(name: "Open Sans", size: 14)!, boldFont: UIFont(name: "Open Sans", size: 14)!, italicFont: UIFont(name: "Open Sans", size: 14)!) as NSAttributedString
+                    
+=======
+                    var attrString = DDHTMLAttribute.attributedStringFromHTML(str!, normalFont: UIFont(name: "Open Sans", size: 14)!, boldFont: UIFont(name: "Open Sans", size: 14)!, italicFont: UIFont(name: "Open Sans", size: 14)!) as NSAttributedString
+>>>>>>> a48b1b706ff63430a8df2e4fb6c0b76c101aae41
+                    let attributString = attrString
+                    self.attributStrings.addObject(attributString)
+                }
+                TAOverlay.hideOverlay()
+                
+                self.tablview.reloadData()
+            }) { (error) -> Void in
+                
+        }
+    }
+    /**
+    Removing observers listion when keyboard hides and appears, removing footerView
+    */
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        /* No longer listen for keyboard */
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    
+    func keyboardWillShow(notification:NSNotification){
+        if let userInfo = notification.userInfo {
+            if let keyboardSize = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.CGRectValue() {
+                self.keyboardSize = keyboardSize
+            } else {
+                // no UIKeyboardFrameBeginUserInfoKey entry in userInfo
+            }
+        } else {
+            // no userInfo dictionary in notification
+        }
+        
+        
+        
+        self.view.layoutIfNeeded()
+        UIView.animateWithDuration(0.5, animations: {
+            self.textviewMarginConstraint?.constant = self.keyboardSize.height
+            self.tablview.layoutIfNeeded()
+            self.tableViewScrollToBottom()
+            
+        })
+        
+    }
+    
+    func keyboardWillHide(notification:NSNotification){
+        self.view.layoutIfNeeded()
+        UIView.animateWithDuration(0.5, animations: {
+            self.textviewMarginConstraint?.constant = 70
+            self.tablview.layoutIfNeeded()
+        })
+        
+    }
+    
+    
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        //NSLog("%d",dataArray.count)
+        return dataArray.count + 1
+        
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        if(indexPath.row == dataArray.count){
+            return 100
+        }
+       
+        
+        var str = self.dataArray[indexPath.row].withtags
+        
+        
+        mTextView?.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.width-18, 30)
+        mTextView?.attributedText = attributStrings[indexPath.row] as! NSAttributedString
+        mTextView?.sizeToFit()
+        
+        var profileHeight = mTextView!.frame.height
+        
+        if(indexPath.row > 0){
+            if(dataArray[indexPath.row].sender == dataArray[indexPath.row-1].sender){
+                profileHeight = profileHeight - 70
+            }else{
+                
+            }
+        }
+        
+        let photoarray = dataArray[indexPath.row].attachment_img as NSArray
+        let linkarray = dataArray[indexPath.row].attachment_link as NSArray
+        if (photoarray.count > 0 || linkarray.count > 0){
+            
+            return 76 + profileHeight + 75
+        }else{
+            return 76 + profileHeight + 10
+        }
+
+        
+    }
+    
+    func respondToTapAvatarGesture(gesture: UITapGestureRecognizer){
+        var storyboard = UIStoryboard(name: "Feed", bundle: nil)
+        let profileViewController = storyboard.instantiateViewControllerWithIdentifier("Profile") as! ProfileViewController
+        
+        if(gesture.view?.tag == 1){
+            profileViewController.selectedUserID = String(user_id) //student
+        }else{
+            profileViewController.selectedUserID = tutorID // tutor
+        }
+        self.navigationController?.pushViewController(profileViewController, animated: true)
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        
+        if(indexPath.row == dataArray.count){
+            
+            var myObject: AnyObject = UITableViewCell()
+            myObject.contentView.backgroundColor = UIColor(red: 231.0/255, green: 231.0/255, blue: 226.0/255, alpha: 1.0)
+            
+            return myObject as! UITableViewCell
+        }
+        let cell = tableView.dequeueReusableCellWithIdentifier("QuestionDetailWithImageCell", forIndexPath: indexPath) as! QuestionDetailWithImageCell
+        cell.selectionStyle = UITableViewCellSelectionStyle.None
+        if (indexPath.row % 2 == 0) {
+            cell.backgroundColor = UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
+        } else {
+            cell.backgroundColor = UIColor.whiteColor()
+        }
+        
+        cell.viewcontroller = self
+        
+        
+        var tap = UITapGestureRecognizer(target: self, action: "respondToTapAvatarGesture:")
+        
+        cell.ivAvatar.addGestureRecognizer(tap)
+        cell.ivAvatar.userInteractionEnabled = true
+        
+        
+        var sender = dataArray[indexPath.row].sender
+		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+
+        if (sender as NSString) != questionModel?.owner_id {
+            cell.lbName.text = dataArray[indexPath.row].username
+            if let url = NSURL(string: dataArray[indexPath.row].avatar) {
+                cell.ivAvatar.hnk_setImageFromURL(url)
+            }
+            tutorID = sender
+            cell.ivAvatar.tag = 2 // tutor
+            cell.lbName.tag = 2
+            cell.backgroundColor = UIColor(red: 245/255.0, green: 245/255.0, blue: 243/255.0, alpha: 1.0)
+            cell.ivMask.image = UIImage(named: "mask_light_rating")
+            var strRating  = NSString(format: "%@", self.tutorModel!.rating)
+            var rating = strRating.floatValue as Float
+            cell.lblRating.text = String(format: "%.01f", rating)
+            cell.lblRating.hidden = false
+            
+        } else {
+			cell.lblRating.hidden = true
+            cell.lbName.text = self.studentName
+            cell.lbCount.text = ""
+            if let url = NSURL(string: studentImageUrl!) {
+                cell.ivAvatar.hnk_setImageFromURL(url)
+            }
+            cell.ivAvatar.tag = 1 // student
+            cell.lbName.tag = 1
+            cell.backgroundColor = UIColor(red: 231/255.0, green: 231/255.0, blue: 226/255.0, alpha: 1.0)
+            cell.ivMask.image = UIImage(named: "mask_dark")			
+        }
+        
+        var strTime = dataArray[indexPath.row].created_time
+        var date = NSDate(timeIntervalSince1970: (strTime as NSString).doubleValue)
+        cell.lbTimestamp.text = date.relativeTime
+        
+        var str = dataArray[indexPath.row].withtags
+        
+        
+        cell.lbDesc.attributedText = attributStrings[indexPath.row] as! NSAttributedString
+        cell.lbDesc.sizeToFit()
+        
+        if(indexPath.row > 0){
+            
+            if((dataArray[indexPath.row].sender as String) == (dataArray[indexPath.row-1].sender as String)){
+                cell.profileview.hidden = true
+                cell.topMarginConstraint?.constant = 15
+                
+            }else{
+                
+                
+                cell.profileview.hidden = false
+                cell.topMarginConstraint?.constant = 73
+                
+            }
+            
+        }else{
+            
+            cell.topMarginConstraint?.constant = 73
+            cell.profileview.hidden = false
+        }
+        
+        
+//        cell.lbDetail.loadHTMLString(finalString, baseURL: nil)
+        
+        let photoarray = dataArray[indexPath.row].attachment_img as NSArray
+        let linkarray = dataArray[indexPath.row].attachment_link as NSArray
+        if (photoarray.count > 0 || linkarray.count > 0){
+            cell.photoArray = photoarray
+            cell.linkArray = linkarray
+            cell.imvCamera.hidden =  true
+            cell.imageCollection.hidden = false
+            cell.imageCollection.reloadData()
+            cell.constraintImageHeight.constant = 65
+            
+            //                    cell.imageCollection.transform = CGAffineTransformMakeTranslation(0, 30)
+        }else{
+            cell.imvCamera.hidden =  true
+            cell.imageCollection.hidden = true
+        }
+        
+        return cell;
+    }
+    
+    @IBAction func gotoProfile(sender: UIButton){
+        var storyboard = UIStoryboard(name: "Feed", bundle: nil)
+        let profileViewController = storyboard.instantiateViewControllerWithIdentifier("Profile") as! ProfileViewController
+        
+        profileViewController.selectedUserID = self.tutorModel?.owner_id // tutor
+        self.navigationController?.pushViewController(profileViewController, animated: true)
+        
+        
+    }
+    
+    @IBAction func onAccept(sender: UIButton){
+		MediumProgressViewManager.sharedInstance.showProgressOnView(self)
+
+		if(IsPaymentClicked == false){
+			IsPaymentClicked = true
+        let paramters = [
+            "token": token,
+            "price": self.tutorModel?.price
+        ]
+                    
+//            TAOverlay.showOverlayWithLabel("Processing...", options: TAOverlayOptions.OverlaySizeRoundedRect|TAOverlayOptions.OverlayTypeActivityBlur)
+			
+        NetworkUI.sharedInstance.checkPaymentToken(paramters, success: { (response) -> Void in
+            
+            println(response)
+            let JSON = response as! NSDictionary
+            let returntype = JSON["type"] as! Int
+            
+            if(returntype == 1){
+                self.actAccept("1")
+            }else if(returntype == 2){
+                self.actAccept("2")
+            }else{
+                if(stripetoken != ""){
+                    self.actAccept("1")
+                }else if(paypaltoken != ""){
+                    self.actAccept("2")
+                }else{
+                    
+                    MediumProgressViewManager.sharedInstance.hideProgressView(self)
+                    
+                    TAOverlay.showOverlayWithLabel("Please add your payment method", options: TAOverlayOptions.OverlaySizeRoundedRect|TAOverlayOptions.OverlayTypeInfo|TAOverlayOptions.AutoHide)
+                    
+                    self.gotopayment()
+					TAOverlay.hideOverlay()
+
+                }
+            }
+            
+            
+            }) { (error) -> Void in
+               println(error)
+        }
+		}
+    }
+    
+    func actAccept(paytype:String){
+        let paramters = [
+            "token": token,
+            "answer_id":self.tutorModel?.answer_id,
+            "Mile[type_id]":paytype,
+            "Creditcard[card_num]":cardnumber,
+            "Billing":"",
+            "stripe" : stripetoken,
+            "paypal" : paypaltoken
+        ]
+        
+
+        
+        NetworkUI.sharedInstance.acceptTutor(paramters, success: { (response) -> Void in
+            
+            MediumProgressViewManager.sharedInstance.hideProgressView(self)
+            
+            let JSON = response as! NSDictionary
+            
+            
+            if((JSON["error"]) != nil){
+                TAOverlay.showOverlayWithLabel("Your card was declined, Please add another one", options: TAOverlayOptions.OverlaySizeRoundedRect|TAOverlayOptions.OverlayTypeError|TAOverlayOptions.AutoHide)
+                self.gotopayment()
+            }else{
+
+                //TAOverlay.showOverlayWithLabel("Payment Success", options: TAOverlayOptions.OverlaySizeRoundedRect|TAOverlayOptions.OverlayTypeSuccess|TAOverlayOptions.AutoHide)
+                
+                self.performSegueWithIdentifier("animation", sender: self)
+
+            }
+            
+            }) { (error) -> Void in
+                
+                println(error)
+                TAOverlay.showOverlayWithLabel("We can not verify your payment", options: TAOverlayOptions.OverlaySizeRoundedRect|TAOverlayOptions.OverlayTypeError|TAOverlayOptions.AutoHide)
+                self.gotopayment()
+				
+        }
+
+    }
+    
+    func gotopayment(){
+        var paymentStoryboard = UIStoryboard(name: "Payment", bundle: nil)
+        let paymentPayViewController = paymentStoryboard.instantiateViewControllerWithIdentifier("PaymentPayViewController") as! PaymentPayViewController
+        paymentPayViewController.paymentprice = (globalPaymentPrice as NSString).floatValue
+        var paymentNav = UINavigationController(rootViewController: paymentPayViewController);
+		answerid = tutorModel?.answer_id
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        var slidemenu = appDelegate.window?.rootViewController as! SlideMenuController
+        slidemenu.changeMainViewController(paymentNav, close: true)
+    }
+    
+    func expandingTextView(expandingTextView: BHExpandingTextView!, didChangeHeight height: Float) {
+        
+        discussBarHeight.constant = 28 + CGFloat(height)
+        self.tableViewScrollToBottom()
+//        self.delegate?.changeFrameHeight( Float(constraintHeight.constant) )
+    }
+    
+    // MARK
+    func sendButtonPressed(inputText: NSAttributedString!) {
+        
+        onComment(discussBar.textView.text)
+    }
+    
+    func onComment(message:String) {
+        
+        let parameters = [
+            "token": token,
+            "answer_id":self.tutorModel?.answer_id,
+            "message":message
+        ]
+        
+        NetworkUI.sharedInstance.postComment(parameters, success: { (response) -> Void in
+            
+            
+            let parameters = [
+                "token": token,
+                "answer_id":self.tutorModel?.answer_id
+            ]
+            
+            NetworkUI.sharedInstance.getDiscussions(parameters,
+                success: { (response) -> Void in
+                    
+                    self.dataArray.removeAll(keepCapacity: true)
+                    
+                    
+                    let arrayTemp = NSMutableArray()
+                    let arrayJSON = response as! NSArray
+                    for dic in arrayJSON{
+                        var model = DiscussionModel(dic: dic as! NSDictionary)
+                        self.dataArray.append(model)
+                        
+                        var str = dic["withtags"] as? String
+                        
+                        //wrap the html with font and color
+                        var attrString = DDHTMLAttribute.attributedStringFromHTML(str!, normalFont: UIFont(name: "Open Sans", size: 14)!, boldFont: UIFont(name: "Open Sans", size: 14)!, italicFont: UIFont(name: "Open Sans", size: 14)!) as NSAttributedString
+                        
+                        arrayTemp.addObject(attrString)
+                        TAOverlay.hideOverlay()
+                        
+                    }
+                    
+                    self.attributStrings.removeAllObjects()
+                    self.attributStrings.addObjectsFromArray(arrayTemp as [AnyObject])
+                    
+                    self.tablview.reloadData()
+                    self.tableViewScrollToBottom()
+                }) { (error) -> Void in
+                    
+            }
+            
+            }) { (error) -> Void in
+                
+        }
+        
+    }
+    
+    func tableViewScrollToUp() {
+        let offset = CGPoint(x: 0, y: 0)
+        tablview.setContentOffset(offset, animated: true)
+    }
+    
+    func tableViewScrollToBottom() {
+        
+        if tablview.contentSize.height > tablview.frame.size.height
+        {
+            let offset = CGPoint(x: 0, y: tablview.contentSize.height - tablview.frame.size.height)
+            tablview.setContentOffset(offset, animated: true)
+        }
+    }
+    
+    //MARK: BHDiscussBarDelegate
+    func enteredMessage(message: String) {
+        onComment(message)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+        if (segue.identifier == "animation") {
+            // pass data to next view
+            
+            let animationController : ConfirmTutorAnimationViewController = segue.destinationViewController as! ConfirmTutorAnimationViewController
+            animationController.left = self.studentAvatar
+            animationController.right = self.avatar.image
+            animationController.answer_id = self.tutorModel?.answer_id
+            animationController.questionModel = self.questionModel
+            animationController.tutorImageUrl = self.tutorImageUrl
+            animationController.tutorName = self.tutorModel?.tutorname
+            
+        }
+    }
+    
+}

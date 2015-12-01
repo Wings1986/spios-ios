@@ -1,0 +1,1140 @@
+//
+//  FeedViewController.swift
+//  spios
+//
+//  Created by Stanley Chiang on 3/7/15.
+//  Copyright (c) 2015 Stanley Chiang. All rights reserved.
+//
+
+import UIKit
+import FRDLivelyButton
+
+class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, OverlayviewDelegate, AnsweredQuestionPopoverViewDelegate {
+    
+//    @IBOutlet weak var tableViewFooter: MyFooter!
+    
+    /// avatar image
+    var avatarImage: UIImage!
+    var test:NSDictionary!
+    var newthing = [NSDictionary]()
+    //loading sign for scrolling
+    /// current page index
+    var nPage:Int!
+    //checks if "search mode" has been activated
+	var searchModeOn = false
+    var caretCalled = false
+	@IBOutlet weak var noQs: UIImageView!
+    
+	@IBOutlet weak var lookDownToStart: UIImageView!
+	@IBOutlet weak var textForFin: UITextField!
+    var showedPop:Bool = false
+    
+    /// async task Id for search typing
+    var currentTaskId:Int!
+
+    let LOADMORE_HEIGHT:CGFloat = 60
+    
+    /// AppDelegate
+    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    
+    /// last query item counts
+    var lastCounts:Int = 0
+    
+    /// main tableview
+    @IBOutlet weak var tableView: UITableView!
+    
+    /// top layoutcontraint of tableview
+    @IBOutlet weak var topMarginConstraint: NSLayoutConstraint?
+    
+    /// bottom layoutcontraint of tableview
+    @IBOutlet weak var bottomMarginConstraint: NSLayoutConstraint?
+    
+
+    /// Question model array
+    var dataArray :[QuestionModel] = [QuestionModel]()
+    
+    /// question model filtered array
+    var questionArray:[QuestionModel] = [QuestionModel]()
+    
+    //check if the person has scrolled to the bottom and is loading 
+	var isOnLoadForSure = false
+    /// search textfield
+    @IBOutlet weak var tfSearch: UITextField!
+    
+    /// search button
+    @IBOutlet weak var btnSearch: UIButton!
+    
+    /// close button
+    @IBOutlet weak var btnClose: UIButton!
+    
+    /// search back view
+    @IBOutlet weak var searchView: UIView!
+    
+    var backIsTouched = false
+    /// keyboard size
+    var keyboardSize : CGRect!
+    var x = 0
+    
+    let blueColor = UIColor(netHex: 0x2ABFFF)
+    let greyColor = UIColor(netHex: 0xBBBBBB)
+    
+    var isKeyboardShown = false
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+
+
+        noQs.hidden = true
+        lookDownToStart.hidden = true
+        textForFin.hidden = true
+		
+        self.currentTaskId = 1;
+        addDoneButtonToKeyboard(tfSearch)
+        tableView.addSubview(self.refreshControl)
+        tableView.delegate = self
+        tableView.dataSource = self
+        //add effect
+        tfSearch.layer.shadowColor = UIColor.darkGrayColor().CGColor
+        tfSearch.layer.shadowOffset = CGSizeMake(0, 1)
+        tfSearch.layer.shadowOpacity = 1
+        tfSearch.layer.shadowRadius = 2
+        tfSearch.layer.cornerRadius = 2
+        
+        tfSearch.attributedPlaceholder = NSAttributedString(string:"Search...",
+            attributes:[NSForegroundColorAttributeName: UIColor.grayColor()])
+
+        searchModeOn = false
+        btnSearch.layer.shadowColor = UIColor.darkGrayColor().CGColor
+        btnSearch.layer.shadowOffset = CGSizeMake(0, 1)
+        btnSearch.layer.shadowOpacity = 1
+        btnSearch.layer.shadowRadius = 1
+//        self.hideSearchBar()
+        
+        nPage = 1
+        //adjust because we used an image for the uitextfield
+        let spacerView = UIView(frame: CGRectMake(0, 0, 10, 10))
+        self.tfSearch.leftViewMode = UITextFieldViewMode.Always
+        self.tfSearch.leftView = spacerView
+        
+        //Navigation Shadow
+        
+        var nav = self.navigationController?.navigationBar
+        nav?.tintColor = blueColor
+        nav?.titleTextAttributes = [NSFontAttributeName : UIFont(name: "Armonioso", size: 20)!,NSForegroundColorAttributeName: blueColor]
+        
+        //SHADOW
+        nav?.layer.shadowOpacity = 0.3
+        nav?.layer.shadowColor = UIColor.blackColor().CGColor
+        nav?.layer.shadowOffset = CGSizeMake(0.0,3.0)
+        nav?.layer.masksToBounds = false
+        nav?.layer.shadowRadius = 2.5
+        
+        
+        
+        if !UIAccessibilityIsReduceTransparencyEnabled() {
+            
+            //alpha instead of blur
+
+            self.searchView.backgroundColor = UIColor(white: 1, alpha: 0.75)
+
+            
+            //let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Light)
+            //let blurEffectView = UIVisualEffectView(effect: blurEffect)
+          //  blurEffectView.frame = self.searchView.bounds
+            //self.searchView.insertSubview(blurEffectView, atIndex: 0)
+			
+            //add auto layout constraints so that the blur fills the screen upon rotating device
+           // blurEffectView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        } else {
+            self.searchView.backgroundColor = UIColor.clearColor()
+        }
+
+	
+    }
+	
+    /**
+        keyboard will show notification
+    */
+	func moveDownWithoutKeyboard(){
+		self.topMarginConstraint?.constant = 64
+		self.tableView.contentInset = UIEdgeInsetsMake(68, 0, 0, 0)
+		self.bottomMarginConstraint?.constant = self.keyboardSize.height
+		self.tableView.layoutIfNeeded()
+
+	}
+    func keyboardWillShow(notification: NSNotification) {
+        
+        if let userInfo = notification.userInfo {
+            if let keyboardSize = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.CGRectValue() {
+                self.keyboardSize = keyboardSize
+            } else {
+                // no UIKeyboardFrameBeginUserInfoKey entry in userInfo
+            }
+        } else {
+            // no userInfo dictionary in notification
+        }
+        
+        self.view.layoutIfNeeded()
+        UIView.animateWithDuration(0.5, animations: {
+            self.topMarginConstraint?.constant = 64
+            self.tableView.contentInset = UIEdgeInsetsMake(68, 0, 0, 0)
+            self.bottomMarginConstraint?.constant = self.keyboardSize.height
+            self.tableView.layoutIfNeeded()
+        })
+        self.btnSearch.hidden = true;
+        
+		//if(searchModeOn == true ){
+        searchModeOn = true
+        var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+        
+		hamberbutton.addTarget(self, action: "backTapped", forControlEvents: .TouchUpInside)
+        hamberbutton.setStyle(kFRDLivelyButtonStyleCaretLeft, animated: true)
+        
+        isKeyboardShown = true
+		
+
+    }
+	func backTapped(){
+        
+		backIsTouched = true
+		refreshQuestions()
+		self.tableView.reloadData()
+		UIView.animateWithDuration(0.5, animations: {
+			self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+			self.tableView.layoutIfNeeded()
+		})
+		searchModeOn = false
+        var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+
+        hamberbutton.setStyle(kFRDLivelyButtonStyleHamburger, animated: true)
+	}
+		
+    /**
+        keyboard will hide notification
+    */
+    func keyboardWillHide(notification: NSNotification) {
+        
+        self.view.layoutIfNeeded()
+        self.topMarginConstraint?.constant = 64
+        self.bottomMarginConstraint?.constant = 43
+		if(tfSearch.hidden == true){
+			UIView.animateWithDuration(0.5, animations: {
+			self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+				self.tableView.layoutIfNeeded()
+				        })
+
+		}
+
+        self.btnSearch.hidden = false;
+        self.btnClose.hidden = true;
+        self.dataArray.removeAll(keepCapacity: true)
+        
+        if(caretCalled == false){
+        var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+        
+        hamberbutton.setStyle(kFRDLivelyButtonStyleHamburger, animated: true)
+        }
+        isKeyboardShown = false
+
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+//        tfSearch.resignFirstResponder()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+       self.setNavigationBarItem()
+        
+        if (self.searchView.hidden == true)
+        {
+            refreshQuestions()
+        }
+        
+        else
+        {
+            processSearchType(self.tfSearch.text)
+            var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+            hamberbutton.addTarget(self, action: "backTapped", forControlEvents: .TouchUpInside)
+            hamberbutton.setStyle(kFRDLivelyButtonStyleCaretLeft, animated: true)
+        }
+        
+        
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+        
+//        if(searchView!.hidden == false){
+//            
+//            var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+//            
+//            hamberbutton.setStyle(kFRDLivelyButtonStyleCaretLeft, animated: true)
+//            
+//        }else{
+//            var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+//            
+//            hamberbutton.setStyle(kFRDLivelyButtonStyleHamburger, animated: true)
+//        }
+    }
+    
+    /// refresh control
+    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: "handleRefresh:", forControlEvents: UIControlEvents.ValueChanged)
+
+        return refreshControl
+        }()
+    /**
+        handle refresh for tableview
+    */
+    func handleRefresh(refreshControl: UIRefreshControl) {
+        
+        if (self.searchView.hidden == true)
+        {
+        // self.tfSearch.text = ""
+        
+        let parameters = [
+            "token": token,
+            "refresh_all":String(format:"%d",nPage)
+        ]
+        
+        //activity spinner activated
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        MediumProgressViewManager.sharedInstance.showProgressOnView(self)
+        NetworkUI.sharedInstance .getMyQuestions(parameters, success: { (response) -> Void in
+            
+            self.questionArray.removeAll(keepCapacity: true)
+            self.dataArray.removeAll(keepCapacity: true)
+
+            
+            let arrayJSON = response as! NSArray
+            for dic in arrayJSON{
+                var model = QuestionModel(dic: dic as! NSDictionary)
+                self.dataArray.append(model)
+				self.noQs.hidden = true
+				self.lookDownToStart.hidden = true
+            }
+            self.questionArray = self.dataArray
+          
+            self.tableView.reloadData()
+            //activity spinner deactivated
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+            MediumProgressViewManager.sharedInstance.hideProgressView(self)
+            refreshControl.endRefreshing()
+            
+            
+            
+            }) { (error) -> Void in
+                
+        }
+
+        }else{
+            processSearchType(self.tfSearch.text)
+            
+        }
+        
+    }
+    
+    /**
+        call GetmyQuestions api to refresh
+    */
+    func refreshQuestions(){
+        let parameters = [
+            "token": token,
+            "refresh_all":String(format:"%d",nPage)
+        ]
+        
+        //activity spinner activated
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        
+        MediumProgressViewManager.sharedInstance.showProgressOnView(self)
+
+        NetworkUI.sharedInstance .getMyQuestions(parameters, success: { (response) -> Void in
+            
+            self.questionArray.removeAll(keepCapacity: true)
+            self.dataArray.removeAll(keepCapacity: true)
+            
+            let arrayJSON = response as! NSArray
+            for dic in arrayJSON{
+                var model = QuestionModel(dic: dic as! NSDictionary)
+                
+                //now, if the question is overdue, go directly to that question.
+                /*
+                var nowDouble = NSDate().timeIntervalSince1970
+                
+                if (nowDouble > model.deadline.doubleValue && model.paid == "0" && model.withdrawed == "0" && model.accept["status"] as! NSNumber == 1) {
+                    
+                    self.questionArray.removeAll(keepCapacity: true)
+                    self.dataArray.removeAll(keepCapacity: true)
+                    self.enterQuestionDetail(model)
+                    return
+                    
+                }
+*/
+
+                self.dataArray.append(model)
+            }
+            
+            self.questionArray = self.dataArray
+            
+            if (self.questionArray.count == 0)
+            {
+                self.noQs.hidden = false
+                self.lookDownToStart.hidden = false
+                self.noQs.image = UIImage(named: "img_noQs")
+                self.lookDownToStart.image = UIImage(named: "img_dropForNoQs")
+                
+            }
+            else {
+                self.noQs.hidden = true
+                self.lookDownToStart.hidden = true
+                
+            }
+            
+            self.lastCounts = self.dataArray.count
+            
+            self.tableView.reloadData()
+            
+            //activity spinner deactivated
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+
+            MediumProgressViewManager.sharedInstance.hideProgressView(self)
+           
+
+            
+            }) { (error) -> Void in
+                
+        }
+    }
+    
+    /**
+        check there is reminder in Question array
+    */
+    func checkReminder(question: QuestionModel)
+    {
+        
+        
+            var nowDouble = NSDate().timeIntervalSince1970
+            
+            if ( nowDouble > question.deadline.doubleValue && question.paid == "0" && question.withdrawed == "0" && question.accept["status"] as! NSNumber == 1) {
+                
+                    self.openPopoverView(question);
+                
+        return;
+            }
+        
+    }
+    
+    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+
+    }
+    
+    /**
+        scrollview delegate (show/hide search bar)
+    */
+//	func changeInset(someBool:Bool){
+//		if(someBool == true){
+//			
+//		}
+//	}
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        var yVelocity : CGFloat = scrollView.panGestureRecognizer.velocityInView(scrollView).y;
+        var needShowFooter:Bool = (scrollView.contentOffset.y > LOADMORE_HEIGHT) && (scrollView.contentSize.height < scrollView.frame.size.height || scrollView.contentOffset.y + scrollView.frame.size.height - LOADMORE_HEIGHT > scrollView.contentSize.height)
+        if (yVelocity <= 0 && needShowFooter) {
+        }else{
+        }
+        
+        if (yVelocity > 0 && searchView.hidden == false && !tfSearch.isFirstResponder())
+        {
+            //only dismiss search on left arrow pressed
+            
+            self.hideSearchBar()
+//            var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+            
+//            hamberbutton.addTarget(self, action: "backTapped", forControlEvents: .TouchUpInside)
+            
+//            hamberbutton.setStyle(kFRDLivelyButtonStyleHamburger, animated: true)
+
+		
+        } else if (yVelocity < 0 && searchView.hidden == true) {
+            self.showSearchBar()
+            
+        }
+		
+    }
+    
+    
+    /**
+        scrollview delegate (load more)
+    */
+    
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        var needShowFooter:Bool = (scrollView.contentOffset.y > LOADMORE_HEIGHT) && (scrollView.contentSize.height < scrollView.frame.size.height || scrollView.contentOffset.y + scrollView.frame.size.height - LOADMORE_HEIGHT > scrollView.contentSize.height)
+        if (needShowFooter){            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                //simulate delay
+                //load only if not in search
+                if (self.searchView.hidden == false)
+                {
+                    
+                self.loadMore()
+                    
+            }
+            }
+        }
+    }
+    
+    /**
+        Load more( call GetmyQuestions with pageindex++
+    */
+    
+    func loadMore()
+    {
+
+        
+        if(self.lastCounts < 10){
+            return
+        }
+		
+		isOnLoadForSure = true
+        nPage = nPage + 1
+        getMyQuestions()
+		isOnLoadForSure = false
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return questionArray.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+		
+        let feedCell = tableView.dequeueReusableCellWithIdentifier("FeedCell_1", forIndexPath: indexPath) as! FeedCell
+		if(self.isOnLoadForSure == true){
+			feedCell.loading.hidden = false
+			feedCell.loading.startAnimating()
+		
+		}else{
+			feedCell.loading.hidden = true
+			feedCell.loading.stopAnimating()
+			
+		}
+        let questionModel = questionArray[indexPath.row] as QuestionModel
+		
+        var date = NSDate(timeIntervalSince1970:questionModel.create_time as Double)
+        
+        feedCell.lblTitle?.text = questionModel.title
+        feedCell.lblSubTitle?.text = questionModel._description
+        feedCell.lblTimesAgo?.text = date.relativeTime
+		if(feedCell.lblTitle?.text != ""){
+			noQs.hidden = true
+			lookDownToStart.hidden = true
+		}
+        
+        //set price
+        feedCell.priceLabel.text = "$" + (questionModel.price as NSString).substringToIndex(count(questionModel.price) - 3)
+        
+        //set time left
+        let deadline = questionModel.deadline
+        
+        let deadlineTime = NSDate(timeIntervalSince1970: NSTimeInterval(deadline.doubleValue))
+        let dateFormatter = NSDateFormatter()
+        //the "M/d/yy, H:mm" is put together from the Symbol Table
+        dateFormatter.dateFormat = "MMM d hh:mm a"
+        feedCell.lblDeadline.text = String(format: "Due: %@", dateFormatter.stringFromDate(deadlineTime))
+        
+        
+        
+        let currentTime = NSDate().timeIntervalSince1970
+        let difference = deadline.doubleValue - currentTime
+        let days = Int(difference) / (3600*24)
+        let hours = Int(difference) / (3600)
+        let minutes = Int(difference) / (60)
+        
+        if (minutes <= 0)
+        {
+            feedCell.timeLabel.text = "0m"
+        }
+        else
+        {
+            if (minutes <= 60)
+            {
+                feedCell.timeLabel.text = String(minutes) + "m"
+            }
+            else if (hours <= 24)
+            {
+                feedCell.timeLabel.text = String(hours) + "h"
+            }
+            else
+            {
+                feedCell.timeLabel.text = String(days) + "d"
+            }
+        }
+        
+        
+        
+        
+        
+        NSLog(feedCell.timeLabel.text!)
+        self.lastCounts++
+        if (questionModel.unread == 0) {//if read
+            feedCell.imvReadMark.hidden = true
+            if (questionModel.real_answers.toInt() == 1)
+            {
+                feedCell.lblNumOfAnswers.text = "\(questionModel.real_answers) bid"
+            }
+            else{
+            feedCell.lblNumOfAnswers.text = "\(questionModel.real_answers) bids"
+            }
+        }
+        else{
+            feedCell.imvReadMark.hidden = false
+            
+            feedCell.lblNumOfAnswers.text = "\(questionModel.unread) Unread bids"
+        }
+        
+        if(questionModel.question_notifications > 0){
+            
+
+            feedCell.imvReadMark.hidden = false
+            feedCell.lblUnread.hidden = false
+            feedCell.lblUnread.text = String(questionModel.question_notifications)
+
+        }else{
+            feedCell.imvReadMark.hidden = true
+            feedCell.lblUnread.hidden = true
+        }
+    
+        feedCell.imvLogoCircle1.layer.cornerRadius = feedCell.imvLogoCircle1.frame.width / 2
+        feedCell.imvLogoCircle1.layer.borderWidth = 2
+        feedCell.imvLogoCircle1.layer.borderColor = UIColor.whiteColor().CGColor
+        
+        feedCell.imvLogoCircle1.layer.shadowOpacity = 0.3
+        feedCell.imvLogoCircle1.layer.shadowColor = UIColor.blackColor().CGColor
+        feedCell.imvLogoCircle1.layer.shadowOffset = CGSizeMake(0.0,1.0)
+        feedCell.imvLogoCircle1.layer.masksToBounds = false
+        feedCell.imvLogoCircle1.layer.shadowRadius = 2.5
+        
+        feedCell.imvLogoCircle2.layer.cornerRadius = feedCell.imvLogoCircle1.frame.width / 2
+        feedCell.imvLogoCircle2.layer.borderWidth = 2
+        feedCell.imvLogoCircle2.layer.borderColor = UIColor.whiteColor().CGColor
+        
+        feedCell.imvLogoCircle2.layer.shadowOpacity = 0.3
+        feedCell.imvLogoCircle2.layer.shadowColor = UIColor.blackColor().CGColor
+        feedCell.imvLogoCircle2.layer.shadowOffset = CGSizeMake(0.0,1.0)
+        feedCell.imvLogoCircle2.layer.masksToBounds = false
+        feedCell.imvLogoCircle2.layer.shadowRadius = 2.5
+        
+        
+        //check if paid
+        if (questionModel.paid == "1")
+        {
+            feedCell.lblStatusLabel.text = "Completed"
+            feedCell.lblStatusLabel.textColor = feedCell.lblTitle.textColor
+            feedCell.imvLogoCircle1.backgroundColor = UIColor(red: 134.0/255, green: 131.0/255, blue: 135.0/255, alpha: 1.0)
+            feedCell.imvLogoCircle2.backgroundColor = UIColor(red: 134.0/255, green: 131.0/255, blue: 135.0/255, alpha: 1.0)
+        }
+            
+        else if (questionModel.paid == "0")
+        {
+			if(questionModel.numBids == 0){
+				 feedCell.lblStatusLabel.text = "Bids Pending"
+			}
+			if(questionModel.numBids != 0){
+				feedCell.lblStatusLabel.text = "\(questionModel.numBids) Bids"
+			}
+			
+            feedCell.lblStatusLabel.textColor = UIColor.grayColor()//feedCell.lblTitle.textColor
+            feedCell.imvLogoCircle1.backgroundColor = UIColor(red: 0.0/255, green: 193.0/255, blue: 248.0/255, alpha: 1.0)
+            feedCell.imvLogoCircle2.backgroundColor = UIColor(red: 0.0/255, green: 193.0/255, blue: 248.0/255, alpha: 1.0)
+            
+            if(questionModel.accept["status"] as! NSNumber == 1 && questionModel.withdrawed != "1"){
+                feedCell.lblStatusLabel.text = "Action Required"
+                feedCell.lblStatusLabel.textColor = feedCell.lblTitle.textColor
+            }
+        }
+		else if (questionModel.real_answers == ""){
+			feedCell.lblStatusLabel.text = "No bids yet"
+			feedCell.lblStatusLabel.textColor = UIColor.grayColor()//feedCell.lblTitle.textColor
+		}
+		
+        //check if withdrawn
+        if (questionModel.withdrawed == "1")
+        {
+            feedCell.lblStatusLabel.text = "Withdrawn"
+            feedCell.lblStatusLabel.textColor = UIColor(red: 255/255, green: 42.0/255, blue: 91.0/255, alpha: 1.0)
+            feedCell.imvLogoCircle1.backgroundColor = UIColor(red: 255/255, green: 42.0/255, blue: 91.0/255, alpha: 1.0)
+            feedCell.imvLogoCircle2.backgroundColor = UIColor(red: 255/255, green: 42.0/255, blue: 91.0/255, alpha: 1.0)
+            
+        }
+        
+       
+        
+        
+        questionModel.avatar = questionModel.avatar.stringByReplacingOccurrencesOfString(" ", withString: "%20", options: NSStringCompareOptions.RegularExpressionSearch, range: nil)
+        
+        ImageLoader.sharedLoader.imageForUrl(questionModel.avatar, imageview: feedCell.imvLogo, completionHandler:{(image: UIImage?, url: String) in
+            
+        })
+        
+        if(indexPath.row % 2 == 1){
+            feedCell.contentView.backgroundColor = UIColor(red: 231.0/255, green: 231.0/255, blue: 226.0/255, alpha: 1.0)
+        }else{
+            feedCell.contentView.backgroundColor = UIColor(red: 245.0/255, green: 245.0/255, blue: 243.0/255, alpha: 1.0)
+        }
+        return feedCell
+        
+    }
+	func addDoneButtonToKeyboard(textView: AnyObject)
+	{
+		var toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 44))
+		var leftSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+		var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: Selector("hideKeyboard:"))
+		toolbar.setItems([leftSpace, doneButton], animated: false)
+		if textView.isKindOfClass(UITextField)
+		{
+			(textView as! UITextField).inputAccessoryView = toolbar
+			return
+		}
+		(textView as! UITextView).inputAccessoryView = toolbar
+	}
+	func hideKeyboard(notification: AnyObject)
+	{
+		let app = UIApplication.sharedApplication()
+		app.keyWindow?.endEditing(true)
+        searchModeOn = true
+        caretCalled = true
+        var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+        
+        
+        hamberbutton.addTarget(self, action: "backTapped", forControlEvents: .TouchUpInside)
+        hamberbutton.setStyle(kFRDLivelyButtonStyleCaretLeft, animated: true)
+	}
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+
+        //check if withdrawn
+        let questionModel = questionArray[indexPath.row] as QuestionModel
+        
+        //if withdrawn, go to withdrawlpending view controller
+        if (questionModel.withdrawed == "1")
+        {
+//            enterWithdrawn(questionModel)
+            enterQuestionDetail(questionModel, isWithdrawn: true)
+        }
+        
+        //else go to question detail controller
+        else {
+            
+            enterQuestionDetail(questionModel, isWithdrawn:false)
+        }
+        
+    }
+//    end handle top refresh
+//    /////////////////////
+    
+    /**
+        open left menu
+    */
+    @IBAction func menuButtonTouched(sender: AnyObject) {
+        self.findHamburguerViewController()?.showMenuViewController()
+        
+    }
+    
+    /**
+        Get Question list with page index
+    */
+    
+    func getMyQuestions(){
+
+        let parameters = [
+            "token": token,
+            "page":String(format:"%d",nPage)
+        ]
+        
+        //activity spinner activated
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+//        if(!isOnLoadForSure){
+        MediumProgressViewManager.sharedInstance.showProgressOnView(self)
+//        }
+        NetworkUI.sharedInstance .getMyQuestions(parameters, success: { (response) -> Void in
+            let arrayJSON = response as! NSArray
+            for dic in arrayJSON{
+                var model = QuestionModel(dic: dic as! NSDictionary)
+                self.dataArray.append(model)
+//                TAOverlay.hideOverlay()
+				self.x = 1
+				self.lastCounts++
+				
+            }
+			
+            self.lastCounts = self.dataArray.count
+            println("LASTCOUNTS:\(self.lastCounts)")
+            self.questionArray = self.dataArray
+//            self.dataArray = self.dataArrayWithFilter(self.tfSearch.text, originArray: self.questionArray)
+            self.tableView.reloadData()
+            
+            //activity spinner deactivated
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+            MediumProgressViewManager.sharedInstance.hideProgressView(self)
+            
+            
+            
+        }) { (error) -> Void in
+            MediumProgressViewManager.sharedInstance.hideProgressView(self)
+        }
+    }
+
+    /**
+        Enter withdraw pending viewcontroller
+    */
+    func enterWithdrawn(question:QuestionModel){
+        
+        var storyboard = UIStoryboard(name: "Question_detail", bundle: nil)
+        var vc = storyboard.instantiateViewControllerWithIdentifier("WithdrawPendingViewcontroller") as! WithdrawPendingViewcontroller
+        vc.questionModel = question
+        let applicationDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        if (question.isUrgent == 0)
+        {
+            qUrgent = false
+        }
+        else if (question.isUrgent == 1)
+        {
+            qUrgent = true
+            
+        }
+        
+        if (question.isPrivate == 0)
+        {
+            qPrivate = false
+        }
+        else if (question.isPrivate == 1)
+        {
+            qPrivate = true
+            
+        }
+        
+        vc.studentName = applicationDelegate.userlogin.username
+        vc.fromDeclinePage = false
+        self.navigationController?.showViewController(vc, sender: self)
+
+      
+    }
+    
+    /**
+        Enter Create question screen
+    */
+    
+    func enterQuestion(){
+       var feedSB:UIStoryboard = UIStoryboard(name: "Question", bundle: nil)
+        if let questionController = feedSB.instantiateViewControllerWithIdentifier("Question") as? QuestionsViewController{
+            navigationController!.showViewController(questionController, sender: self)
+        }
+    }
+    
+    /**
+        Enter question detail screen
+    */
+    
+    func enterQuestionDetail(question:QuestionModel, isWithdrawn:Bool){
+
+        
+        var qdSB:UIStoryboard = UIStoryboard(name: "Question_detail", bundle: nil)
+        
+        let applicationDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        if let questionDetailController = qdSB.instantiateViewControllerWithIdentifier("QuestionDetailViewController") as? QuestionDetailViewController {
+            questionDetailController.questionId = question.question_id.toInt()
+            questionDetailController.questionModel = question
+            questionDetailController.studentName = applicationDelegate.userlogin.username
+            questionDetailController.studentImageUrl = question.avatar
+            questionDetailController.isWithdrwan = isWithdrawn
+            
+            if (question.isUrgent == 0)
+            {
+                qUrgent = false
+            }
+            else if (question.isUrgent == 1)
+            {
+                qUrgent = true
+                
+            }
+            
+            if (question.isPrivate == 0)
+            {
+                qPrivate = false
+            }
+            else if (question.isPrivate == 1)
+            {
+                qPrivate = true
+                
+            }
+            println("------------------")
+            println(qUrgent)
+            println(qPrivate)
+			
+            if(question.accept["status"] as! NSNumber == 1){
+                
+                questionDetailController.answerId = (question.accept["answerid"] as! NSString).integerValue
+                
+            }
+            
+            navigationController?.showViewController(questionDetailController, sender:self)
+            
+            self.checkReminder(question)
+        }
+    }
+    
+    /**
+        Post question action
+    */
+    
+    @IBAction func postQuestion(sender: UIButton) {
+        
+        enterQuestion()
+
+    }
+    
+    /**
+        Move to payment page
+    */
+    
+    func showpaymentscreen(){
+        
+        var storyboard = UIStoryboard(name: "Feed", bundle: nil)
+        let paymentViewController = storyboard.instantiateViewControllerWithIdentifier("PaymentViewController") as! PaymentViewController
+        let nav = UINavigationController(rootViewController: paymentViewController) as UINavigationController
+        
+        self.lew_dismissPopupViewWithanimation(LewPopupViewAnimationDrop.alloc())
+        let slidermenu =  self.appDelegate.window?.rootViewController as! SlideMenuController
+        slidermenu.changeMainViewController(nav, close: true)
+    }
+    
+    func onDismiss() {
+        self.lew_dismissPopupViewWithanimation(LewPopupViewAnimationDrop.alloc())
+    }
+    
+    func onAnswer() {
+        var storyboard = UIStoryboard(name: "Answer", bundle: nil)
+        let myAnswerViewController = storyboard.instantiateViewControllerWithIdentifier("MyAnswer") as! MyAnswerViewController
+        let nav = UINavigationController(rootViewController: myAnswerViewController) as UINavigationController
+        
+        self.lew_dismissPopupViewWithanimation(LewPopupViewAnimationDrop.alloc())
+        let slidermenu =  self.appDelegate.window?.rootViewController as! SlideMenuController
+        slidermenu.changeMainViewController(nav, close: true)
+    }
+
+    @IBAction func viewQuestion(sender: UIButton) {
+
+    }
+    
+    @IBAction func unwindSegueToFeedVC(segue: UIStoryboardSegue)
+    {}
+    
+    // MARK SearchBar
+    
+    /**
+        Show search view
+    */
+    func showSearchBar() {
+        if (!searchView.hidden){
+            
+            return;
+        }
+        
+        searchView.alpha = 0
+        searchView.hidden = false
+        btnSearch.hidden = false
+        btnClose.hidden = false
+        tfSearch.text = ""
+//        searchModeOn = true
+        
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            self.searchView.alpha = 1
+        })
+        
+<<<<<<< HEAD
+=======
+        // var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+        
+        // hamberbutton.addTarget(self, action: "backTapped", forControlEvents: .TouchUpInside)
+        // hamberbutton.setStyle(kFRDLivelyButtonStyleCaretLeft, animated: true)
+>>>>>>> 5df18c0e89a1d6e33691bc369c14fe1e1a5f3701
+        
+    }
+    
+    /**
+        Hide search bar
+    */
+    
+    func hideSearchBar() {
+        UIView.animateWithDuration(0.5, animations: {
+            self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+            self.tableView.layoutIfNeeded()
+        })
+        self.tfSearch.resignFirstResponder()
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            self.searchView.alpha = 0
+        }) { (success) -> Void in
+            self.searchView.hidden = true
+            self.btnSearch.hidden = true
+            self.btnClose.hidden = true
+        }
+        searchModeOn = false
+        var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+        
+        hamberbutton.setStyle(kFRDLivelyButtonStyleHamburger, animated: true)
+        
+//        refreshQuestions()
+    }
+    
+    /**
+        Search text changed
+    */
+    
+    @IBAction func searchKeyChanged(sender: UITextField) {
+        var searchText = sender.text
+//        if(count(searchText) == 0){
+//            questionArray = self.dataArray
+//            self.tableView.reloadData()
+//            
+//            
+//        }else{
+//            dataArray = self.dataArrayWithFilter(searchText, originArray: movies)
+            processSearchType(searchText)
+			
+            //moveDownWithoutKeyboard()
+            
+        // Start from search bar view whenever search changes and executes
+        let yCoordinateFromSearchBar = self.searchView.frame.height
+        self.tableView.setContentOffset(CGPoint(x: 0,y: -1.0 * yCoordinateFromSearchBar), animated: false)
+	
+    }
+    
+    
+    /**
+        call sesarch api
+    */
+    
+    func processSearchType(keyword: String){
+		MediumProgressViewManager.sharedInstance.showProgressOnView(self)
+
+        self.currentTaskId = self.currentTaskId + 1;
+//        NSInteger taskId = self.currentTaskId;
+        let taskId = self.currentTaskId
+        let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+        
+
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1 * NSEC_PER_SEC)), queue) { // 2
+            if (taskId == self.currentTaskId) // this is still current task
+            {
+                // your query
+                
+                if (taskId == self.currentTaskId) // sill current after query? update visual elements
+                {
+                    let parameters = [
+                        "token": token,
+                        "query":keyword
+                    ]
+                    
+                    //activity spinner activated
+                    UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+                    NetworkUI.sharedInstance .getSearchQuery(parameters, success: { (response) -> Void in
+                        let arrayJSON = response as! NSArray
+                        
+                        self.questionArray.removeAll(keepCapacity: true)
+                        for dic in arrayJSON{
+                            var model = QuestionModel(dic: dic as! NSDictionary)
+//                            for curModel in self.dataArray{
+//                                if(model.question_id == curModel.question_id){
+                                    self.questionArray.append(model);
+//                                }
+//                            }
+                            
+                            
+                            
+                        }
+                        if(self.searchModeOn == true){
+						var hamberbutton = self.navigationItem.leftBarButtonItem?.customView as! FRDLivelyButton
+						hamberbutton.addTarget(self, action: "backTapped", forControlEvents: .TouchUpInside)
+						hamberbutton.setStyle(kFRDLivelyButtonStyleCaretLeft, animated: true)
+						self.searchModeOn = true
+                        }
+                        self.tableView.reloadData()
+						MediumProgressViewManager.sharedInstance.hideProgressView(self)
+
+                        //activity spinner deactivated
+                        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+						self.refreshControl.endRefreshing()
+                        }) { (error) -> Void in
+                            
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    /**
+        action when user click search key
+    */
+    @IBAction func onSearch(sender: AnyObject) {
+        
+        
+        self.hideSearchBar()
+//		refreshQuestions()
+//		self.tableView.reloadData()
+//		refreshQuestions()
+//		println("Search: BWAH")
+		
+		
+    }
+    
+    /**
+        action when user click close button
+    */
+    @IBAction func onClose(sender: AnyObject) {
+        
+        self.tfSearch.text = ""
+        self.tfSearch.resignFirstResponder()
+        refreshQuestions()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        return true;
+    }
+    
+    // MARK popup
+    func openPopoverView(question:QuestionModel) {
+        let screenSize: CGRect = UIScreen.mainScreen().bounds
+        let popView = AnsweredQuestionPopoverView.loadFromNibNamed("AnsweredQuestionPopoverView", bundle: nil) as! AnsweredQuestionPopoverView
+        
+        popView.delegate = self
+        popView.question = question
+        
+        popView.frame = CGRectMake(0, 0, screenSize.width - 70, screenSize.height - 130)
+        
+        self.lew_presentPopupView(popView, animation: LewPopupViewAnimationDrop.alloc())
+    }
+    
+    
+    /**
+        Enter detail screen
+    */
+    func onGotoDetail(question: QuestionModel) {
+
+        self.lew_dismissPopupViewWithanimation(LewPopupViewAnimationDrop.alloc())
+        
+        self.enterQuestionDetail(question, isWithdrawn: false)
+        
+    }
+    
+    @IBAction func titleAction(sender: UIButton) {
+        self.hideSearchBar()
+        var top:NSIndexPath = NSIndexPath(forRow: NSNotFound, inSection: 0)
+        self.tableView.scrollToRowAtIndexPath(top, atScrollPosition: UITableViewScrollPosition.Top, animated: true)
+    }
+}

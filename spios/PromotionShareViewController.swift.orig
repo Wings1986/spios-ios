@@ -1,0 +1,152 @@
+//
+//  PromotionShareViewController.swift
+<<<<<<< HEAD
+//  spios
+//
+//  Created by user on 6/15/15.
+=======
+//
+//  Created by StudyPool on 6/15/15.
+//  Modified by Andrew Mikhailov on 2015.06.18.
+>>>>>>> eedb4b487ab27087dce73484cdfff486355e6b7f
+//  Copyright (c) 2015 Studypool. All rights reserved.
+//
+
+import UIKit
+<<<<<<< HEAD
+import MessageUI
+
+class PromotionShareViewController: UIViewController, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate, SphereMenuDelegate {
+
+    @IBOutlet weak var promoCode: UILabel!
+    @IBOutlet weak var bottomView: UIView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+//        promoCode.text = "studypool6537a"
+        // Do any additional setup after loading the view.
+        
+        let parameters = [
+            "token": "82ab4d396d8de3338e4412334ab6a880"//token
+        ]
+
+        NetworkUI.sharedInstance .getPromocode(parameters, success: { (response) -> Void in
+            let responseString = response as! String
+            self.promoCode.text = responseString
+            
+            }) { (error) -> Void in
+                
+        }
+        
+        let start = UIImage(named: "btnshare")
+        let image1 = UIImage(named: "icon-facebook")
+        let image2 = UIImage(named: "icon-twitter")
+        let image3 = UIImage(named: "icon-email")
+        var images:[UIImage] = [image1!,image2!,image3!]
+        var menu = SphereMenu(startPoint: CGPointMake(self.view.frame.width/2, self.view.frame.height - 40), startImage: start!, submenuImages:images, tapToDismiss:true)
+
+        menu.delegate = self
+        
+        self.view.addSubview(menu)
+        
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    @IBAction func onEmailInvite(sender: AnyObject) {
+        let mailComposeViewController = configuredMailComposeViewController()
+        if MFMailComposeViewController.canSendMail() {
+            self.presentViewController(mailComposeViewController, animated: true, completion: nil)
+        } else {
+            self.showSendMailErrorAlert()
+        }
+    }
+    
+    func configuredMailComposeViewController() -> MFMailComposeViewController {
+        let mailComposerVC = MFMailComposeViewController()
+        mailComposerVC.mailComposeDelegate = self // Extremely important to set the --mailComposeDelegate-- property, NOT the --delegate-- property
+        
+//        mailComposerVC.setToRecipients(["nurdin@gmail.com"])
+        mailComposerVC.setSubject("Invite to Studypool")
+        mailComposerVC.setMessageBody(String(format: "I invite you to join Studypool, here is the promocode\n%@", self.promoCode.text!), isHTML: false)
+        
+        return mailComposerVC
+    }
+    
+    func showSendMailErrorAlert() {
+        let sendMailErrorAlert = UIAlertView(title: "Could Not Send Email", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", delegate: self, cancelButtonTitle: "OK")
+        sendMailErrorAlert.show()
+    }
+    
+    // MARK: MFMailComposeViewControllerDelegate
+    
+    func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!) {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+        
+    }
+
+    @IBAction func onTextInvite(sender: AnyObject) {
+        
+        if (MFMessageComposeViewController.canSendText()) {
+            let controller = MFMessageComposeViewController()
+            controller.body = String(format: "I invite you to join Studypool, here is the promocode\n%@", self.promoCode.text!)
+//            controller.recipients = [phoneNumber.text]
+            controller.messageComposeDelegate = self
+            self.presentViewController(controller, animated: true, completion: nil)
+        }else {
+            let sendMailErrorAlert = UIAlertView(title: "Could Not Send SMS", message: "Your device do not support SMS...", delegate: self, cancelButtonTitle: "OK")
+            sendMailErrorAlert.show()
+
+        }
+    }
+    
+    
+    func messageComposeViewController(controller: MFMessageComposeViewController!, didFinishWithResult result: MessageComposeResult) {
+        //... handle sms screen actions
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        self.navigationController?.navigationBarHidden = false
+    }
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+    }
+    */
+    
+    @IBAction func onShare(sender: UIButton){
+        
+        
+    }
+    func sphereDidSelected(index: Int) {
+        println("\(index)")
+    }
+}
+=======
+
+class PromotionShareViewController: UIViewController {
+
+    @IBOutlet weak var promoCode: UILabel!
+    
+    override func viewDidLoad() {
+        
+        super.viewDidLoad()
+        
+        promoCode.text = "studypool6537a"
+    }
+
+    @IBAction func onEmailInvite(sender: AnyObject) {
+    }
+
+    @IBAction func onTextInvite(sender: AnyObject) {
+    }
+}
+>>>>>>> eedb4b487ab27087dce73484cdfff486355e6b7f

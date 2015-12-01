@@ -1,0 +1,169 @@
+//
+//  QuestionDetailFooterController.swift
+//  spios
+//
+//  Created by Administrator on 6/9/15.
+//  Copyright (c) 2015 Studypool. All rights reserved.
+//
+
+import UIKit
+import Haneke
+
+protocol QuestionBidFooterControllerDelegate
+{
+    func openBidView()
+    func closeBidView()
+    func selectBid(row:Int)
+    func showBidProfile(row:Int)
+}
+
+/// Question Bid Tutor List ViewController
+class QuestionBidFooterController: UIViewController, HowTobidPopOverDelegate{
+
+    
+    @IBOutlet weak var footerview: QuestionBidFooterView!
+    
+    var delegate:QuestionBidFooterControllerDelegate?
+    
+    var dataTutor = []
+    
+    var tutorCell = NSMutableDictionary()
+    
+    var bExpand:Bool = false
+
+    var category:String? = "MATH"
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        footerview.controller = self
+        footerview.viewdidload()
+        // Do any additional setup after loading the view.
+
+        // Set up toolview
+        
+    }
+    
+    
+
+    @IBAction func leftButtonPressed(sender: UIButton) {
+        let buttonPosition = sender.convertPoint(CGPointZero, toView: footerview.mTableView)
+        let indexPath = footerview.mTableView.indexPathForRowAtPoint(buttonPosition)
+        self.delegate?.showBidProfile(indexPath!.row)
+    }
+    
+    @IBAction func rightButtonPressed(sender: UIButton) {
+        let buttonPosition = sender.convertPoint(CGPointZero, toView: footerview.mTableView)
+        let indexPath = footerview.mTableView.indexPathForRowAtPoint(buttonPosition)
+        let cellSelected = footerview.mTableView.cellForRowAtIndexPath(indexPath!) as! QuestionBidCell
+        self.delegate?.selectBid(indexPath!.row)
+    }
+
+    func reloadBidList(){
+        if(dataTutor.count == 0){
+            footerview.btnHowTowork.hidden = true
+        }
+        footerview.mTableView.reloadData()
+        footerview.lbBidTitle.text = String(format: "Bids (%d)", self.dataTutor.count)
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    // MARK: - Actions
+    func actDetail(sender:UIButton){
+        //self.delegate?.selectBid(sender.tag)
+        let bidModel = dataTutor[sender.tag] as! BidModel
+        //change to access bidarray
+        globalPaymentPrice = bidModel.price
+    }
+    
+    
+    
+    
+    @IBAction func onClickExpand(sender: AnyObject) {
+        if (bExpand == true) {
+            footerview.closeView()
+        } else {
+            footerview.openView()
+        }
+    }
+    
+    
+    
+    @IBAction func showBidGuidPopupview(sender: AnyObject) {
+        let screenSize: CGRect = UIScreen.mainScreen().bounds
+        let popView = HowTobidPopOverView.loadFromNibNamed("HowTobidPopOverView", bundle: nil) as! HowTobidPopOverView
+        popView.delegate = self
+        popView.frame = CGRectMake(0, 0, screenSize.width - 70, 430)
+        
+        self.lew_presentPopupView(popView, animation: LewPopupViewAnimationDrop.alloc())
+    }
+    
+    func onDismiss() {
+        self.lew_dismissPopupViewWithanimation(LewPopupViewAnimationDrop.alloc())
+    }
+    
+<<<<<<< HEAD
+=======
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCellWithIdentifier("QuestionBidCell", forIndexPath: indexPath) as! QuestionBidCell
+        cell.selectionStyle = UITableViewCellSelectionStyle.None
+        
+        let bidModel = dataTutor[indexPath.row] as! BidModel
+        var date = NSDate(timeIntervalSince1970:bidModel.created_time as Double)
+        
+        ImageLoader.sharedLoader.imageForUrl(bidModel.avatar, imageview: cell.ivAvatar, completionHandler:{(image: UIImage?, url: String) in
+        })
+        
+        cell.ivAvatar.layer.cornerRadius = cell.ivAvatar.frame.width / 2
+        cell.ivAvatar.layer.masksToBounds = true
+        
+        let strRating  = NSString(format: "%@", bidModel.rating)
+        let rating = strRating.floatValue as Float
+        
+        cell.lbRating.text = String(format: "%.01f", rating)
+        cell.lbName.text = bidModel.tutorname
+        
+        // Recommended?
+        cell.recommendedBadge.hidden = !bidModel.recommended
+        
+        // University
+        if (!bidModel.university.isEmpty) {
+            cell.lblUniversity.text = bidModel.university
+            cell.lblUniversity.hidden = false
+        }
+        else {
+            cell.lblUniversity.hidden = true
+        }
+        
+        // Dynamic tier pricing updated via backend
+        self.lbStandardTier.text = String(format: "%@", bidModel.tier_name)
+        cell.lbPrice.text = String(format: "$%@", String((bidModel.price as NSString)))
+        cell.lbDeadline.text = String(format: "%@ %@", bidModel.deliverin, bidModel.timetype)
+        cell.btnDetail.tag = indexPath.row
+        cell.btnDetail.addTarget(self, action: "actDetail:", forControlEvents: UIControlEvents.TouchUpInside)
+
+        if(bidModel.bid_notifications > 0){
+            cell.unreadView.hidden = false
+            cell.lbUnread.text = String(bidModel.bid_notifications)
+            cell.lbUnread.hidden = false
+            cell.detailview.hidden = true
+        } else{
+            cell.lbUnread.hidden = true
+            cell.unreadView.hidden = true
+            cell.detailview.hidden = false
+        }
+
+        return cell;
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+      //  self.delegate?.showBidProfile(indexPath.row)
+    }
+>>>>>>> 2244c279ab1c83ce2838b22b9b1d356e7f5a7767
+    
+   
+}

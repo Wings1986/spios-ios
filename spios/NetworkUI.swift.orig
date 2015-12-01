@@ -1,0 +1,483 @@
+//
+//  NetworkUI.swift
+//  spios
+//
+//  Created by MobileGenius on 6/9/15.
+//  Copyright (c) 2015 Studypool. All rights reserved.
+//
+
+import UIKit
+import Alamofire
+
+
+class NetworkUI: NSObject {
+    let kBaseURL            :String = "https://www.studypool.com/"
+    
+    let kPostQuestionURL    :String = "questions/apicreatefreestan"
+    let kGetMyQuestions     :String = "questions/apiindexstan"
+    let kGetSearchQuery     :String = "questions/apisearch"
+    let kGetProfile         :String = "questions/Apistudentprofile"
+    let kGetAvatarList      :String = "questions/Apiselectprofile"
+    let kSetProfileURL      :String = "questions/Apiallprofile"
+    let kGetMyAnswer        :String = "questions/apimyanswers"
+    
+    
+    let kCheckQuestionTaken    :String = "questions/apichecktake"
+    let kGetQuestionDetail     :String = "questions/apiviewstan"
+    let kGetAnswerDetail       :String = "questions/apianswerdetailstan"
+    let kGetDiscussions       :String = "discuss/apiview"
+    
+    let kPostAcceptAnswer      :String = "questions/apibestfreestan"
+    let kPostDeclineAnswer     :String = "questions/apideclinestan"
+    let kGetTutorProfilePic    :String = "questions/apipicstan"
+    let kPostTalk              :String = "discuss/apitalk"
+    
+<<<<<<< HEAD
+    let kGetPromocode          :String = "questions/ApiReferralSelf"
+    let kSubmitPromocode       :String = "questions/ApiReferral"
+    
+    let kSubmitPaypal          :String = "questions/apipaypaltokenstan"
+
+    
+=======
+    let kGetStudentProfile     :String = "questions/apistudentprofile"
+    let kGetTutorProfile       :String = "questions/apitutorprofile"
+
+    let kGetTutorAnswerTaken       :String = "questions/ApiAnswerTakeStan"
+    let kPostTutorAnswerSubmit       :String = "questions/apisubmitanswersstan"
+>>>>>>> c6c5e4be3e2e383a46d225882ec40c82f9cafd89
+    
+    
+    static let sharedInstance = NetworkUI()
+    
+    func urlRequestWithComponents(urlString:String, parameters:Dictionary<String, AnyObject>, imageData:NSData) -> (URLRequestConvertible, NSData) {
+        
+        // create url request to send
+        var mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: urlString)!)
+        mutableURLRequest.HTTPMethod = Alamofire.Method.POST.rawValue
+        let boundaryConstant = "myRandomBoundary12345";
+        let contentType = "multipart/form-data;boundary="+boundaryConstant
+        mutableURLRequest.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        
+        
+        
+        // create upload data to send
+        let uploadData = NSMutableData()
+        
+        // add image
+        uploadData.appendData("\r\n--\(boundaryConstant)\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+        uploadData.appendData("Content-Disposition: form-data; name=\"media\"; filename=\"image.jpg\"\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+        uploadData.appendData("Content-Type: image/jpeg\r\n\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+        uploadData.appendData(imageData)
+        
+        // add parameters
+        for (key, value) in parameters {
+            uploadData.appendData("\r\n--\(boundaryConstant)\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+            uploadData.appendData("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n\(value)".dataUsingEncoding(NSUTF8StringEncoding)!)
+        }
+        uploadData.appendData("\r\n--\(boundaryConstant)--\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+        
+        
+        
+        // return URLRequestConvertible and NSData
+        return (Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0, uploadData)
+    }
+    
+    func getStudentsProfile(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetProfile), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                if(error == nil){
+                    
+                    var model = ProfileModel(dic: JSON as! NSDictionary)
+                    
+                    success(response: model)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    func getAvatarList(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetAvatarList), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                if(error == nil){
+                    
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    func setAvatarImagePath(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kSetProfileURL), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+        
+    }
+    
+    func postQuestion(params:[String: AnyObject], image:UIImage, success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        
+        let imageData = UIImagePNGRepresentation(image)
+        
+        
+        
+        // CREATE AND SEND REQUEST ----------
+        
+        let urlRequest = urlRequestWithComponents(String(format: "%@%@", kBaseURL, kPostQuestionURL), parameters: params, imageData: imageData)
+        
+        Alamofire.upload(urlRequest.0, urlRequest.1)
+            .progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) in
+                println("\(totalBytesWritten) / \(totalBytesExpectedToWrite)")
+            }
+            .responseJSON { (request, response, JSON, error) in
+                if(error == nil){
+                    success(response: JSON)
+                }else{
+                    failure(error: error)
+                }
+        }
+    
+    }
+    
+    func postQuestion(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        Alamofire.request(.POST, String(format: "%@%@", kBaseURL, kPostQuestionURL), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+        
+    }
+    
+    func getMyQuestions(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetMyQuestions), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    func getMyAnswer(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetMyAnswer), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    func getSearchQuery(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetSearchQuery), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    //MARK: APIs For Question/Answer Detail
+    func getCheckQuestionTaken(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kCheckQuestionTaken), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    func getQuestionDetail(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(kGetQuestionDetail, params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetQuestionDetail), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    func getAnswerDetail(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(kGetAnswerDetail, params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetAnswerDetail), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    func getDiscussions(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetDiscussions), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    
+    func postAcceptAnswer(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kPostAcceptAnswer), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    func postDeclineAnswer(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kPostDeclineAnswer), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }else{
+                    failure(error: error)
+                }
+        }
+    }
+    
+    func postComment(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kPostTalk), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+
+    func getTutorProfilePic(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetTutorProfilePic), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+<<<<<<< HEAD
+    func getPromocode(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetPromocode), parameters: params)
+            .responseString(encoding: NSUTF8StringEncoding) { (_, _, response, error) -> Void in
+                
+                if(error == nil){
+                    success(response: response)
+=======
+    
+    // MARK profile
+    func getStudentProfile(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetStudentProfile), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+>>>>>>> c6c5e4be3e2e383a46d225882ec40c82f9cafd89
+                }
+                else{
+                    failure(error: error)
+                }
+<<<<<<< HEAD
+                println(response)
+                
+        }
+        
+    }
+    func submitPromocode(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kSubmitPromocode), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                if(error == nil){
+                    success(response: JSON)
+                }else{
+                    failure(error: error)
+                }
+                println(JSON)
+        }
+        
+    }
+    func submitPaypal(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kSubmitPaypal), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                if(error == nil){
+                    success(response: JSON)
+                }else{
+                    failure(error: error)
+                }
+                println(JSON)
+=======
+                
+        }
+    }
+    func getTutorProfile(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetTutorProfile), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+                
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+    
+    // MARK tutor answer
+    func getTutorAnswerTaken(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.GET, String(format: "%@%@", kBaseURL, kGetTutorAnswerTaken), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+        }
+    }
+
+    func postTutorAnswerSubmit(params:[String: AnyObject], success: (response: AnyObject!) -> Void, failure: (error: NSError?) -> Void) {
+        
+        println(params)
+        
+        Alamofire.request(.POST, String(format: "%@%@", kBaseURL, kPostTutorAnswerSubmit), parameters: params)
+            .responseJSON { (_, _, JSON, error) in
+                
+                println(JSON)
+
+                if(error == nil){
+                    success(response: JSON)
+                }
+                else{
+                    failure(error: error)
+                }
+                
+>>>>>>> c6c5e4be3e2e383a46d225882ec40c82f9cafd89
+        }
+        
+    }
+}
